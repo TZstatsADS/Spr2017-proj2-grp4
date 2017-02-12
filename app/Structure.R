@@ -1,3 +1,4 @@
+#Structure of our APP:
 library(shiny)
 
 shinyApp(
@@ -12,11 +13,12 @@ ui = fluidPage(
                                      cursor = "move",
                                      wellPanel(
                                        sliderInput("n", "", min=3, max=20, value=5)
-                                              )
+                                              ),
+                                     style = "opacity: 0.5"
                                      )
                        ),
               tabPanel("Second tab name"),
-              tabPanel("Thrid tab name",
+              tabPanel("Data Reference",
                        absolutePanel(top = 20,
                                      left = 300,
                                      height = 600,
@@ -33,4 +35,7 @@ ui = fluidPage(
                 ),
 server = function(input, output){}
 )
+
+
+
 
