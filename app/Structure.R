@@ -4,7 +4,7 @@ library(shiny)
 shinyApp(
 ui = fluidPage(
   navbarPage("Our App's Name",
-              tabPanel("First tab name",
+              tabPanel("Locate Your School!",
                        absolutePanel(top = 50,
                                      left = 20,
                                      width = 300,
@@ -38,7 +38,8 @@ ui = fluidPage(
                        
                                      
                        ),
-              tabPanel("Second tab name"),
+              tabPanel("Comparision!"),
+              tabPanel("Historical Data Overview"),
               tabPanel("Data Reference",
                        absolutePanel(top = 20,
                                      left = 20,
