@@ -63,6 +63,7 @@ ui = fluidPage(
                        absolutePanel(top = 20,
                                      left = 20,
                                      height = 600,
+                                     width = 300,
                                      draggable = TRUE,
                                      wellPanel(
                                        sliderInput("n","",min = 5, max = 20,value=5)
