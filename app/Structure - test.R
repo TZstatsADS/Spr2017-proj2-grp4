@@ -84,7 +84,7 @@ server = function(input, output){
       setView(lng = -74, lat = 42, zoom = 6) %>%
       addTiles() %>%
       addCircleMarkers(lng = map.plot.date()$long, lat = map.plot.date()$alt, popup = c("Testing For Project"))%>%
-    addCircleMarkers(lng = map$lon, lat = map$lat, fill=TRUE, color="red", popup=map$conm)                   
+    addMarkers(lng = map$lon, lat = map$lat,  popup=map$conm)                   
     })
                                 }
 )
