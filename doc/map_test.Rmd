@@ -4,9 +4,6 @@ output: ioslides_presentation
 ---
 
 ## Load the data manipulation libraries
-```{r}
-setwd("~/GitHub/Spr2017-proj2-grp4")
-```
 
 ```{r load_libs, message=F}
 if (!require("DT")) install.packages('DT')
