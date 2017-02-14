@@ -18,13 +18,14 @@ library(lubridate)
 
 ```{r load_data}
 college<-read.csv(file="~/GitHub/Spr2017-proj2-grp4/data/College2014_15.csv", stringsAsFactors = FALSE)
-college$LATITUDE<-as.numeric(college$LATITUDE)
-college$LONGITUDE<-as.numeric(college$LONGITUDE)
 ```
 ```{r}
 map<-as.data.frame(cbind(college$LONGITUDE, college$LATITUDE))
-map<-na.omit(map)
 colnames(map)<-c("lon", "lat")
+map$conm<-college$INSTNM
+map<-na.omit(map)
+# map$lon<-map$lon))
+# map$lat<-as.numeric(as.character(map$lat))
 ```
 
 ## Plot using longitude and latitude
