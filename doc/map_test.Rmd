@@ -1,0 +1,38 @@
+---
+title: "R Notebook"
+output: ioslides_presentation
+---
+
+## Load the data manipulation libraries
+```{r}
+setwd("~/GitHub/Spr2017-proj2-grp4")
+```
+
+```{r load_libs, message=F}
+if (!require("DT")) install.packages('DT')
+if (!require("dtplyr")) install.packages('dtplyr')
+if(!require("lubridate")) install.packages('lubridate')
+
+library(dtplyr)
+library(dplyr)
+library(DT)
+library(lubridate)
+```
+
+```{r load_data}
+college<-read.csv(file="~/GitHub/Spr2017-proj2-grp4/data/College2014_15.csv", stringsAsFactors = FALSE)
+college$LATITUDE<-as.numeric(college$LATITUDE)
+college$LONGITUDE<-as.numeric(college$LONGITUDE)
+```
+```{r}
+map<-as.data.frame(cbind(college$LONGITUDE, college$LATITUDE))
+map<-na.omit(map)
+colnames(map)<-c("lon", "lat")
+```
+
+## Plot using longitude and latitude
+```{r plot_indiv, message=F, warning=F, echo=F}
+library(ggmap)
+ggmap(get_map("New York, New York",zoom=6,color = "bw")) + 
+  geom_point(data=map, aes(x=lon,y=lat),  color='red') 
+```
