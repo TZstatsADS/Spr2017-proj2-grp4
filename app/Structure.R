@@ -2,7 +2,7 @@
 #Have not been able to dynamically change the opacity of the panel. 
 library(shiny)
 library(ggmap)
-
+library(leaflet)
 shinyApp(
 ui = fluidPage(
   navbarPage("Our App's Name",
