@@ -22,8 +22,8 @@ ui = fluidPage(
                                        numericInput("score.act","Your ACT Scores",value=0,min=0,max=36),
                                        radioButtons("cost","Preferred Cost of Attendence",choices=c("NULL","$2000-$2999","$3000-$3999"),selected = "NULL"),
                                        checkboxGroupInput("stat","Start Comparison!",choices="Show stats!",selected = NULL),
-                                       sliderInput("Alt","Altitude",min=40.5,max=45.04,step = 0.01,value = 41),
-                                       sliderInput("Long","Longitude",min=-80.52,max=-71.95,step = 0.01,value=-73)
+                                       sliderInput("Alt","Altitude",min=40.5,max=45.04,step = 0.0001,value = 40.7484),
+                                       sliderInput("Long","Longitude",min=-80.52,max=-71.95,step = 0.0001,value=-73.9857)
                                                )#Do not forget to add comma, if you want to initate moveable panel.
                             #         style = "opacity: 0.9"
                              #        )
@@ -44,7 +44,7 @@ ui = fluidPage(
                                         ),
                                   
                        
-                         leafletOutput("map")
+                         uiOutput("map")
                                )
                        )
                        ),
@@ -66,6 +66,11 @@ ui = fluidPage(
   
                 ),
 server = function(input, output){
+  
+  output$map=renderUI({
+    leafletOutput('myMap', width = "100%", height = 700)
+                      })
+  
   map.plot.date = reactive({
     
     data.frame(alt = input$Alt,
@@ -73,10 +78,10 @@ server = function(input, output){
               )
                           })
   
-  output$map = renderLeaflet({
+  output$myMap = renderLeaflet({
     leaflet() %>%
-      setView(lng = -74, lat = 42, zoom = 6) %>%
-      addTiles() %>%
+      setView(lng = -73.9857, lat = 40.7484, zoom = 12) %>%
+      addProviderTiles("CartoDB.Positron") %>%
       addCircleMarkers(lng = map.plot.date()$long, lat = map.plot.date()$alt, popup = c("Testing For Project"))
                          })
                                 }
