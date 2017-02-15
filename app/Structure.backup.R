@@ -10,7 +10,7 @@ library(dplyr)
 #colnames(map)<-c("lon", "lat", "degree")
 #map$conm<-college$INSTNM
 #map<-na.omit(map)
-college = read.csv("school.select.csv", header = TRUE, stringsAsFactors = FALSE)
+college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
 major = c("Agriculture, Agriculture Operations, And Related Sciences","Natural Resources And Conservation", "Architecture And Related Services","Area, Ethnic, Cultural, Gender, And Group Studies"," Communication, Journalism, And Related Programs","Communications Technologies/Technicians And Support Services","Computer And Information Sciences And Support Services","Personal And Culinary Services"," Education","Engineering","Engineering Technologies And Engineering-Related Fields","Foreign Languages, Literatures, And Linguistics"," Family And Consumer Sciences/Human Sciences","Legal Professions And Studies","English Language And Literature/Letters","Liberal Arts And Sciences, General Studies And Humanities","Library Science"," Biological And Biomedical Sciences","Mathematics And Statistics","Military Technologies And Applied Sciences","Multi/Interdisciplinary Studies","Parks, Recreation, Leisure, And Fitness Studies","Philosophy And Religious Studies","Theology And Religious Vocations"," Physical Sciences"," Science Technologies/Technicians"," Psychology"," Homeland Security, Law Enforcement, Firefighting And Related Protective Services","Public Administration And Social Service Professions","Social Sciences","Construction Trades","Mechanic And Repair Technologies/Technicians","Precision Production","Transportation And Materials Moving","Visual And Performing Arts","Health Professions And Related Programs","Business, Management, Marketing, And Related Support Services","History")
 major.index =c("PCIP01",
                "PCIP03",
@@ -135,34 +135,14 @@ server = function(input, output){
                       })
   
   school.selection = eventReactive(input$search,{
-    college %>% filter(ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMYMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMYMID <= input$sat.math))) %>% slice(1:2)
+    college %>% filter(ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) %>% slice(1:2)
   })
   
-  map.plot.date = reactive({
-    
-    
-    list(alt = school.selection$LATITUDE,
-               long = school.selction$LONGITUDE,
-         name = school.selection$INSTNM
-              )
-                          })
-  
-  map.final.plot = reactive({
-    if(dim(map.plot.date) >= 2)
-    {
-      map.plot.date[2,]
-    }
-    else if(dim(map.plot.date) == 1)
-    {
-      map.plot.date
-    }
-      
-  })
   output$myMap = renderLeaflet({
     leaflet() %>%
       setView(lng = -73.9857, lat = 40.7484, zoom = 12) %>%
       addProviderTiles("CartoDB.Positron") %>%
-      addCircleMarkers(lng = map.final.plot$LONGITUDE, lat = map.final.plot$LATITUDE, popup = map.final.plot$INSTNM)
+      addCircleMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = school.selection()$INSTNM)
                          })
   output$test.1 = renderPrint({
     "Our Graphs go to here...."
