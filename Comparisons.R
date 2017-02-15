@@ -95,31 +95,55 @@ get.text.outputs <- function(data,school){
   
   #get adm_rate
   adm_rate <- relevent_data$ADM_RATE
-  output.list[[6]] <- adm_rate
+  output.list[[6]] <- as.character(adm_rate)
   
   #get TUITIONFEE_IN
   tuitionfee_in <- relevent_data$TUITIONFEE_IN
-  output.list[[7]] <- tuitionfee_in
+  output.list[[7]] <- as.character(tuitionfee_in)
   #get TUITIONFEE_OUT
   tuitionfee_out <- relevent_data$TUITIONFEE_OUT
-  output.list[[8]] <- tuitionfee_out
+  output.list[[8]] <- as.character(tuitionfee_out)
   
   #get PCTFLOAN
-  pctfloan <- relevent_data[,relevent_data$PCTFLOAN]
+  pctfloan <- relevent_data$PCTFLOAN
   pctfloan <- paste(pctfloan*100,"%",collapse="")
   output.list[[9]] <- pctfloan
   
-  ugds <- relevent_data[,relevent_data$UGDS]
-  output.list[[10]] <- ugds
+  ugds <- relevent_data$UGDS
+  output.list[[10]] <- as.character(ugds)
   
   return(output.list)
 }
 
+##Need to fix get.pie.chart function
 get.pie.chart <- function(data, school){
   my.text <- "UGDS_2*[A-Z]+"
   indices <- grepl(my.text,colnames(data))
   my.data <- data[data$INSTNM==school,indices]
-  return(my.data)
+  my.data <- my.data[,1:9]
+  demo.names <- c("White","Black","Hispanic","Asian","American Indian/Alaska Native",
+                  "Native Hawaiian/Pacific Islander","2 or More Races","Non-resident Aliens",
+                  "Unknown")
+  colnames(my.data <- demo.names)
+  to.remove <- NULL
+  for (i in 1:length(my.data)){
+    if (my.data[i] == 0 | is.na(my.data[i])){
+      to.remove <- c(to.remove,i)
+    }
+  }
+  
+  if (length(my.data) == length(to.remove)){
+    my.df <- data.frame(1)
+    colnames(my.df) <- "NA"
+    return(my.df)
+  } else {
+    if (!is.null(to.remove)){
+      my.df <- my.data[,-to.remove]
+      colnames(my.df) <- demo.names[-to.remove]
+      return(my.df)
+    } else{return(my.data)}
+  } 
+  
 }
 
 get.bargraph.data <- function(data,school){
@@ -368,14 +392,11 @@ server = function(inuput,output){
   
   demo1 <- get.pie.chart(data,school1)
   demo2 <- get.pie.chart(data,school2)
-  demo.names <- c("White","Black","Hispanic","Asian","American Indian/Alaska Native",
-                  "Native Hawaiian/Pacific Islander","2 or More Races","Non-resident Aliens",
-                  "Unknown")
   output$demographics1 <- renderPlot(
-    pie3D(demo1,labels=demo.names)
+    pie3D(demo1,labels=colnames(demo1))
   )
   output$demographics2 <- renderPlot(
-    pie3D(demo2,labels=demo.names)
+    pie3D(demo2,labels=colnames(demo2))
   )
   
   female1 <- get.mf.data(data,school1)
