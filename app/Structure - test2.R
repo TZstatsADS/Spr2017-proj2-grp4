@@ -3,7 +3,7 @@
 library(shiny)
 library(ggmap)
 library(leaflet)
-college<-read.csv(file="~/GitHub/Spr2017-proj2-grp4/data/College2014_15.csv", stringsAsFactors = FALSE,na.strings = "NULL")
+college<-read.csv(file="../data/College2014_15.csv", stringsAsFactors = FALSE,na.strings = "NULL")
 map<-as.data.frame(cbind(college$LONGITUDE, college$LATITUDE, college$HIGHDEG))
 colnames(map)<-c("lon", "lat", "degree")
 map$conm<-college$INSTNM
