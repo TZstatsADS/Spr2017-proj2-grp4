@@ -52,7 +52,7 @@ major.index =c("PCIP01",
                "PCIP54")
 shinyApp(
 ui = fluidPage(
-  navbarPage("Our App's Name",
+  navbarPage("Our App's Name", theme="styles.css",
               tabPanel("Locate Your School!",
                        sidebarLayout(
                          sidebarPanel(  
@@ -68,9 +68,9 @@ ui = fluidPage(
                                        fluidRow(column(3,numericInput("sat.reading","SAT Read",value=0,min=0,max=100)),
                                        column(3,numericInput("sat.math","SAT Math",value=0,min=0,max=100),offset = 1),
                                        column(3,numericInput("sat.writing","SAT Write",value=0,min=20,max=100),offset = 1)),
-                                       fluidRow(column(11,numericInput("score.act","ACT Scores",value=0,min=0,max=36))),
+                                       fluidRow(column(11,numericInput("score.act","ACT Scores",value=15,min=0,max=36))),
                                        fluidRow(column(6,checkboxGroupInput("in","In or Out State?",choices = c("In state", "Out state"),selected = "In state"))),
-                                       fluidRow(column(11,numericInput("max","Your Maximum acceptable Tution In state",min = 0, max = 51010, value = 0))),
+                                       fluidRow(column(11,numericInput("max","Your Maximum acceptable Tution",min = 0, max = 51010, value = 0))),
 
                                        #radioButtons("cost","Preferred Cost of Attendence",choices=c("NONE","$2000-$2999","$3000-$3999"),selected = "NONE"),
                                        #checkboxGroupInput("stat","Start Comparison!",choices="Show stats!",selected = NULL),
@@ -131,7 +131,7 @@ ui = fluidPage(
 server = function(input, output){
   
   output$map=renderUI({
-    leafletOutput('myMap', width = "100%", height = 700)
+    leafletOutput('myMap', width = "300%", height = 700)
                       })
   
   school.selection = eventReactive(input$search,{
