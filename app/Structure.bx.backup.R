@@ -3,6 +3,52 @@
 library(shiny)
 library(ggmap)
 library(leaflet)
+
+#college<-read.csv(file="D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data/College2014_15.csv", stringsAsFactors = FALSE,na.strings = "NULL")
+#map<-as.data.frame(cbind(college$LONGITUDE, college$LATITUDE, college$HIGHDEG))
+#colnames(map)<-c("lon", "lat", "degree")
+#map$conm<-college$INSTNM
+#map<-na.omit(map)
+college = read.csv("school.select.csv", header = TRUE, stringsAsFactors = FALSE)
+major = c("Agriculture, Agriculture Operations, And Related Sciences","Natural Resources And Conservation", "Architecture And Related Services","Area, Ethnic, Cultural, Gender, And Group Studies"," Communication, Journalism, And Related Programs","Communications Technologies/Technicians And Support Services","Computer And Information Sciences And Support Services","Personal And Culinary Services"," Education","Engineering","Engineering Technologies And Engineering-Related Fields","Foreign Languages, Literatures, And Linguistics"," Family And Consumer Sciences/Human Sciences","Legal Professions And Studies","English Language And Literature/Letters","Liberal Arts And Sciences, General Studies And Humanities","Library Science"," Biological And Biomedical Sciences","Mathematics And Statistics","Military Technologies And Applied Sciences","Multi/Interdisciplinary Studies","Parks, Recreation, Leisure, And Fitness Studies","Philosophy And Religious Studies","Theology And Religious Vocations"," Physical Sciences"," Science Technologies/Technicians"," Psychology"," Homeland Security, Law Enforcement, Firefighting And Related Protective Services","Public Administration And Social Service Professions","Social Sciences","Construction Trades","Mechanic And Repair Technologies/Technicians","Precision Production","Transportation And Materials Moving","Visual And Performing Arts","Health Professions And Related Programs","Business, Management, Marketing, And Related Support Services","History")
+major.index =c("PCIP01",
+               "PCIP03",
+               "PCIP04",
+               "PCIP05",
+               "PCIP09",
+               "PCIP10",
+               "PCIP11",
+               "PCIP12",
+               "PCIP13",
+               "PCIP14",
+               "PCIP15",
+               "PCIP16",
+               "PCIP19",
+               "PCIP22",
+               "PCIP23",
+               "PCIP24",
+               "PCIP25",
+               "PCIP26",
+               "PCIP27",
+               "PCIP29",
+               "PCIP30",
+               "PCIP31",
+               "PCIP38",
+               "PCIP39",
+               "PCIP40",
+               "PCIP41",
+               "PCIP42",
+               "PCIP43",
+               "PCIP44",
+               "PCIP45",
+               "PCIP46",
+               "PCIP47",
+               "PCIP48",
+               "PCIP49",
+               "PCIP50",
+               "PCIP51",
+               "PCIP52",
+               "PCIP54")
 shinyApp(
 ui = fluidPage(
   navbarPage("Our App's Name",
@@ -15,33 +61,37 @@ ui = fluidPage(
                           #           height = 600,
                            #          draggable = TRUE,
                                      #cursor = "move",
-                                     wellPanel(
+                                     
                                        #sliderInput("stat","start Comparison",min=1,max=20,step=1,value =1)
-                                       selectInput("major","Your Major",choices = c("NULL","Major1","Major2"),selected = "NULL"),
-                                       numericInput("score.sat","Your SAT Scores",value=0,min=20,max=100),
-                                       numericInput("score.act","Your ACT Scores",value=0,min=0,max=36),
-                                       radioButtons("cost","Preferred Cost of Attendence",choices=c("NULL","$2000-$2999","$3000-$3999"),selected = "NULL"),
-                                       checkboxGroupInput("stat","Start Comparison!",choices="Show stats!",selected = NULL),
-                                       sliderInput("Alt","Altitude",min=40.5,max=45.04,step = 0.0001,value = 40.7484),
-                                       sliderInput("Long","Longitude",min=-80.52,max=-71.95,step = 0.0001,value=-73.9857)
-                                               )#Do not forget to add comma, if you want to initate moveable panel.
+                                       fluidRow(column(11,selectInput("major","Your Major",choices = c("NONE",major),selected = "None"))),
+                                       fluidRow(column(3,numericInput("sat.reading","SAT Read",value=0,min=0,max=100)),
+                                       column(3,numericInput("sat.math","SAT Math",value=0,min=0,max=100),offset = 1),
+                                       column(3,numericInput("sat.writing","SAT Write",value=0,min=20,max=100),offset = 1)),
+                                       fluidRow(column(11,numericInput("score.act","ACT Scores",value=0,min=0,max=36))),
+                                       fluidRow(column(6,checkboxGroupInput("in","In or Out State?",choices = c("In state", "Out state"),selected = "In state"))),
+                                       fluidRow(column(11,numericInput("max","Your Maximum acceptable Tution In state",min = 0, max = 51010, value = 0))),
+
+                                       #radioButtons("cost","Preferred Cost of Attendence",choices=c("NONE","$2000-$2999","$3000-$3999"),selected = "NONE"),
+                                       #checkboxGroupInput("stat","Start Comparison!",choices="Show stats!",selected = NULL),
+                                       actionButton("search", "Start Searching!")
+                                       #sliderInput("Alt","Altitude",min=40.5,max=45.04,step = 0.0001,value = 40.7484),
+                                       #sliderInput("Long","Longitude",min=-80.52,max=-71.95,step = 0.0001,value=-73.9857)
+                                               #Do not forget to add comma, if you want to initate moveable panel.
                             #         style = "opacity: 0.9"
                              #        )
                                       ),
                        mainPanel(
-                       conditionalPanel("input.stat =='Show stats!'",
-                         absolutePanel(top = 50,
-                                       right = 20,
-                                       width =300,
-                                       height = 10000,
-                                       draggable = TRUE,
-                                       cursor = "move",
-                                       wellPanel(
-                                        sliderInput("input","BLBLABLA",min =1 ,max =20 ,step =1, value =1) 
-                                                ),
-                                       style = "opacity: 0.9"
-                                       )
-                                        ),
+                       #conditionalPanel("input.stat =='Show stats!'",
+                        # absolutePanel(top = 50,
+                         #             width =300,
+                          #             height = 10000,
+                           #            draggable = TRUE,
+                            #          wellPanel(
+                             #           sliderInput("input","BLBLABLA",min =1 ,max =20 ,step =1, value =1) 
+                              #                  ),
+                               #        style = "opacity: 0.9"
+                                #       )
+                                #        ),
                                   
                        
                          uiOutput("map")
@@ -83,18 +133,35 @@ server = function(input, output){
     leafletOutput('myMap', width = "100%", height = 700)
                       })
   
+  school.selection = eventReactive(input$search,{
+    college %>% filter(ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMYMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMYMID <= input$sat.math)))
+  })
+  
   map.plot.date = reactive({
     
-    data.frame(alt = input$Alt,
-               long = input$Long
+    
+    list(alt = school.selection$LATITUDE,
+               long = school.selction$LONGITUDE,
+         name = school.selection$INSTNM
               )
                           })
   
+  map.final.plot = reactive({
+    if(dim(map.plot.date) >= 2)
+    {
+      map.plot.date[2,]
+    }
+    else if(dim(map.plot.date) == 1)
+    {
+      map.plot.date
+    }
+      
+  })
   output$myMap = renderLeaflet({
     leaflet() %>%
       setView(lng = -73.9857, lat = 40.7484, zoom = 12) %>%
       addProviderTiles("CartoDB.Positron") %>%
-      addCircleMarkers(lng = map.plot.date()$long, lat = map.plot.date()$alt, popup = c("Testing For Project"))
+      addCircleMarkers(lng = map.final.plot$LONGITUDE, lat = map.final.plot$LATITUDE, popup = map.final.plot$INSTNM)
                          })
   output$test.1 = renderPrint({
     "Our Graphs go to here...."
