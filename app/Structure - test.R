@@ -3,9 +3,15 @@
 library(shiny)
 library(ggmap)
 library(leaflet)
+<<<<<<< HEAD
 college<-read.csv(file="D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data/College2014_15.csv", stringsAsFactors = FALSE)
 map<-as.data.frame(cbind(college$LONGITUDE, college$LATITUDE))
 colnames(map)<-c("lon", "lat")
+=======
+college<-read.csv(file="~/GitHub/Spr2017-proj2-grp4/data/College2014_15.csv", stringsAsFactors = FALSE,na.strings = "NULL")
+map<-as.data.frame(cbind(college$LONGITUDE, college$LATITUDE, college$HIGHDEG))
+colnames(map)<-c("lon", "lat", "degree")
+>>>>>>> b4411fdda4a34e4d8c446a455ed7f229698f4fcb
 map$conm<-college$INSTNM
 map<-na.omit(map)
 
@@ -88,6 +94,7 @@ shinyApp(
                #,position = "fixed-top"
     )
     
+<<<<<<< HEAD
   ),
   server = function(input, output){
     
@@ -110,6 +117,19 @@ shinyApp(
     })
     output$test.1 = renderPrint({
       "Our Graphs go to here...."
+=======
+    data.frame(alt = input$Alt,
+               long = input$Long
+              )
+                          })
+ 
+  output$map = renderLeaflet({
+    leaflet() %>%
+      setView(lng = -74, lat = 42, zoom = 6) %>%
+      addTiles() %>%
+      addCircleMarkers(lng = map.plot.date()$long, lat = map.plot.date()$alt, popup = c("Testing For Project"))%>%
+    addMarkers(lng = map$lon, lat = map$lat,  popup=map$conm)                   
+>>>>>>> b4411fdda4a34e4d8c446a455ed7f229698f4fcb
     })
     
     output$test.2 = renderPrint({
