@@ -84,7 +84,7 @@ server = function(input, output){
       setView(lng = -74, lat = 42, zoom = 6) %>%
       addTiles() %>%
       addCircleMarkers(lng = map.plot.date()$long, lat = map.plot.date()$alt, popup = c("Testing For Project"))%>%
-    addMarkers(lng = map$lon, lat = map$lat,  popup=map$conm)                   
+    addMarkers(lng = map$lon, lat = map$lat,  popup=map$conm, icon=list(iconUrl='https://cdn0.iconfinder.com/data/icons/pixel-perfect-at-24px-volume-2/24/2010-512.png',iconSize=c(25,25)))                   
     })
                                 }
 )
