@@ -78,7 +78,7 @@ ui = fluidPage(
                                        fluidRow(column(11,numericInput("score.act","ACT Scores",value=0,min=0,max=36))),
                                        fluidRow(
                                                 wellPanel(
-                                                  checkboxGroupInput("location","In State?",choices = c("In state", "Out state"),selected = "In state"),
+                                                  radioButtons("location","In State?",choices = c("In state", "Out state"),selected = "In state"),
                                                   numericInput("max","Maximum acceptable Tution",min = 0, max = 51010, value = 0))),
                                        #radioButtons("cost","Preferred Cost of Attendence",choices=c("NONE","$2000-$2999","$3000-$3999"),selected = "NONE"),
                                        #checkboxGroupInput("stat","Start Comparison!",choices="Show stats!",selected = NULL),
