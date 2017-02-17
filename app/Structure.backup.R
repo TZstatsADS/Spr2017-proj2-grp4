@@ -79,7 +79,7 @@ ui = fluidPage(
                                        fluidRow(column(6,checkboxGroupInput("location","In or Out State?",choices = c("In state", "Out state"),selected = "In state"))),
                                        fluidRow(column(11,numericInput("max","Your Maximum acceptable Tution In state",min = 0, max = 51010, value = 0))),
                                        fluidRow(column(11,verbatimTextOutput("text"))),
-                                       fluidRow(column(5,checkboxGroupInput("prefer.1","Most",choices = c("Major","Grade","Cost"))),column(5,checkboxGroupInput("prefer.2","Second most",choices = c("Major","Grade","Cost")))),
+                                       fluidRow(column(5,checkboxGroupInput("prefer.1","Most",choices = c("None","Major","Grade","Cost"),selected = "None"))),
                                        #radioButtons("cost","Preferred Cost of Attendence",choices=c("NONE","$2000-$2999","$3000-$3999"),selected = "NONE"),
                                        #checkboxGroupInput("stat","Start Comparison!",choices="Show stats!",selected = NULL),
                                        actionButton("search", "Start Searching!")
@@ -139,20 +139,33 @@ ui = fluidPage(
 server = function(input, output){
   
   major.data.index = reactive({
-    list(major.frame[which(major.frame$major == input$major),"index"],)#major  index
+    X = major.frame[which(major.frame$major == input$major),"index"]#major  index
   })
   
-  output$map=renderUI({
-    leafletOutput('myMap', width = "100%", height = 700)
-                      })
+  major.data.frame = reactive({
+    college[order(college[,major.data.index],decreasing = TRUE),][1:5,]
+  })
+  
+  cost.in.data.frame = reactive({
+    college[order(college[,major.data.index],decreasing = TRUE),][1:5,]
+  })
+  
+  cost.out.data.frame = reactive({
+    college[order(college[,major.data.index],decreasing = TRUE),][1:5,]
+  })
+  
+  score.data.frame = reactive({
+    college[order(college[,major.data.index],decreasing = TRUE),][1:5,]
+  })
   
   school.selection = eventReactive(input$search,{
     if(input$prefer.1 == "Major")#"Major","Grade","Cost"
     {
-      if(prefer.2 == "Grade")#Only pass major and grade
+      if(prefer.2 == "Grade")#Only pass major and grade if Grade do not pass, pass major
       {
         if(input$location == "In State")
         {
+          college = subset(college, college)
           college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
         }
         else if(input$location == "Out State")
@@ -172,57 +185,8 @@ server = function(input, output){
         }
       }
     }
-    else if(input$prefer.1 == "Grade")
-    {
-      if(input$prefer.2 == "Major")
-      {
-        if(input$location == "In State")
-        {
-          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-        }
-        else if(input$location == "Out State")
-        {
-          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-        }
-      }
-      else if(input$prefer.2 == "Cost")
-      {
-        if(input$location == "In State")
-        {
-          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-        }
-        else if(input$location == "Out State")
-        {
-          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-        }
-      }
-    }
-    else if(input$prefer.1 =="Cost")
-    {
-      if(input$prefer.2 == "Major")
-      {
-        if(input$location == "In State")
-        {
-          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-        }
-        else if(input$location == "Out State")
-        {
-          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-        }
-      }
-      else if(input$prefer.2 =="Grade")
-      {
-        if(input$location == "In State")
-        {
-          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-        }
-        else if(input$location == "Out State")
-        {
-          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-        }
-      }
-      
-    }
+   
+  
     
   
     })
@@ -234,7 +198,7 @@ server = function(input, output){
       addCircleMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = school.selection()$INSTNM)
                          })
   output$text = renderPrint({
-    "Which Conern you the most?"
+    "Which Conerns you the most?"
   })
   output$test.1 = renderPrint({
     "Our Graphs go to here...."
