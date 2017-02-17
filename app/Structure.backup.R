@@ -56,6 +56,7 @@ major.index =c("PCIP01",
                "PCIP51",
                "PCIP52",
                "PCIP54")
+major.frame = data.frame(major = major, index = major.index)
 shinyApp(
 ui = fluidPage(
   navbarPage("Our App's Name",
@@ -137,6 +138,10 @@ ui = fluidPage(
                 ),
 server = function(input, output){
   
+  major.data.index = reactive({
+    list(major.frame[which(major.frame$major == input$major),"index"],)#major  index
+  })
+  
   output$map=renderUI({
     leafletOutput('myMap', width = "100%", height = 700)
                       })
@@ -144,46 +149,81 @@ server = function(input, output){
   school.selection = eventReactive(input$search,{
     if(input$prefer.1 == "Major")#"Major","Grade","Cost"
     {
-      if(prefer.2 == "Grade")
+      if(prefer.2 == "Grade")#Only pass major and grade
       {
-        
+        if(input$location == "In State")
+        {
+          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+        }
+        else if(input$location == "Out State")
+        {
+          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+        }
       }
       else if(prefer.2 == "Cost")
       {
-        
+        if(input$location == "In State")
+        {
+          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+        }
+        else if(input$location == "Out State")
+        {
+          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+        }
       }
     }
     else if(input$prefer.1 == "Grade")
     {
       if(input$prefer.2 == "Major")
       {
-        
+        if(input$location == "In State")
+        {
+          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+        }
+        else if(input$location == "Out State")
+        {
+          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+        }
       }
       else if(input$prefer.2 == "Cost")
       {
-        
+        if(input$location == "In State")
+        {
+          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+        }
+        else if(input$location == "Out State")
+        {
+          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+        }
       }
     }
     else if(input$prefer.1 =="Cost")
     {
       if(input$prefer.2 == "Major")
       {
-        
+        if(input$location == "In State")
+        {
+          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+        }
+        else if(input$location == "Out State")
+        {
+          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+        }
       }
       else if(input$prefer.2 =="Grade")
       {
-        
+        if(input$location == "In State")
+        {
+          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+        }
+        else if(input$location == "Out State")
+        {
+          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+        }
       }
       
     }
-    if(input$location == "In State")
-    {
-      college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-    }
-    else if(input$location == "Out State")
-    {
-      college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-    }
+    
   
     })
   
