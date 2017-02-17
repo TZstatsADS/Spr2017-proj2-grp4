@@ -83,8 +83,10 @@ ui = fluidPage(
                                        #radioButtons("cost","Preferred Cost of Attendence",choices=c("NONE","$2000-$2999","$3000-$3999"),selected = "NONE"),
                                        #checkboxGroupInput("stat","Start Comparison!",choices="Show stats!",selected = NULL),
                                        fluidRow(
-                                         wellPanel(actionButton("search", "Start Searching!"),
-                                                   checkboxInput("stat","Demographic")
+                                         wellPanel(
+                                           selectInput("Focus","Area of Focus",choices = c("New York State", "New York City"), selected = "New York State"),
+                                           actionButton("search", "Start Searching!")
+                                                   
                                                 ))
                                        #sliderInput("Alt","Altitude",min=40.5,max=45.04,step = 0.0001,value = 40.7484),
                                        #sliderInput("Long","Longitude",min=-80.52,max=-71.95,step = 0.0001,value=-73.9857)
@@ -140,6 +142,15 @@ ui = fluidPage(
   
                 ),
 server = function(input, output){
+  
+  mapping = reactive({
+    if(input$Focus == "New York State")
+    {
+      list(X=-73.9857,Y=40.7484,Z=6)
+    }
+    else if(input$Focus == "New York City")
+      list(X=-74.0059,Y=40.7128,Z=10)
+  })
   
   major.data.index = reactive({
     major.frame[which(major.frame$major == input$major),"index"]#major  index
@@ -216,10 +227,7 @@ server = function(input, output){
   
   
   output$myMap = renderLeaflet({
-    leaflet()%>%
-      setView(lng = -73.9857, lat = 40.7484, zoom = 6)%>%
-      addProviderTiles("CartoDB.Positron")%>%
-      addCircleMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = school.selection()$INSTNM)
+    leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("CartoDB.Positron")%>%addCircleMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = school.selection()$INSTNM)
                          
     })
   
