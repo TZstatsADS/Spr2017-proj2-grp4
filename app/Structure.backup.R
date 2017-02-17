@@ -197,6 +197,9 @@ server = function(input, output){
       addProviderTiles("CartoDB.Positron") %>%
       addCircleMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = school.selection()$INSTNM)
                          })
+  
+  
+  
   output$text = renderPrint({
     "Which Conerns you the most?"
   })
