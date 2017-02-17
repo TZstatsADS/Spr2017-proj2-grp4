@@ -71,15 +71,13 @@ ui = fluidPage(
                                      #cursor = "move",
                                      
                                        #sliderInput("stat","start Comparison",min=1,max=20,step=1,value =1)
-                                       fluidRow(column(11,selectInput("major","Your Major",choices = c("NONE",major),selected = "None"))),
+                                       fluidRow(column(11,selectInput("major","Your Major",choices = c("None",major),selected = "None"))),
                                        fluidRow(column(3,numericInput("sat.reading","SAT Read",value=0,min=0,max=100)),
                                        column(3,numericInput("sat.math","SAT Math",value=0,min=0,max=100),offset = 1),
                                        column(3,numericInput("sat.writing","SAT Write",value=0,min=20,max=100),offset = 1)),
                                        fluidRow(column(11,numericInput("score.act","ACT Scores",value=0,min=0,max=36))),
                                        fluidRow(column(6,checkboxGroupInput("location","In or Out State?",choices = c("In state", "Out state"),selected = "In state"))),
                                        fluidRow(column(11,numericInput("max","Your Maximum acceptable Tution In state",min = 0, max = 51010, value = 0))),
-                                       fluidRow(column(11,verbatimTextOutput("text"))),
-                                       fluidRow(column(5,checkboxGroupInput("prefer.1","Most",choices = c("None","Major","Grade","Cost"),selected = "None"))),
                                        #radioButtons("cost","Preferred Cost of Attendence",choices=c("NONE","$2000-$2999","$3000-$3999"),selected = "NONE"),
                                        #checkboxGroupInput("stat","Start Comparison!",choices="Show stats!",selected = NULL),
                                        actionButton("search", "Start Searching!")
@@ -139,57 +137,78 @@ ui = fluidPage(
 server = function(input, output){
   
   major.data.index = reactive({
-    X = major.frame[which(major.frame$major == input$major),"index"]#major  index
+    major.frame[which(major.frame$major == input$major),"index"]#major  index
   })
   
-  major.data.frame = reactive({
-    college[order(college[,major.data.index],decreasing = TRUE),][1:5,]
-  })
-  
-  cost.in.data.frame = reactive({
-    college[order(college[,major.data.index],decreasing = TRUE),][1:5,]
-  })
-  
-  cost.out.data.frame = reactive({
-    college[order(college[,major.data.index],decreasing = TRUE),][1:5,]
-  })
-  
-  score.data.frame = reactive({
-    college[order(college[,major.data.index],decreasing = TRUE),][1:5,]
+  major.data.frame.mean = reactive({
+    mean(college[,major.data.index()])
   })
   
   school.selection = eventReactive(input$search,{
-    if(input$prefer.1 == "Major")#"Major","Grade","Cost"
+    
+   
+    if(input$major != "None" & ((input$sat.reading == 0 & input$sat.writing == 0 & input$sat.math == 0)|(input$score.act == 0))  & input$max == 0)
     {
-      if(prefer.2 == "Grade")#Only pass major and grade if Grade do not pass, pass major
+      college %>% filter(college[,major.data.index()] >= major.data.frame.mean())
+    }
+    else if(input$major == "None" & ((input$sat.reading != 0 & input$sat.writing != 0 & input$sat.math != 0)|(input$score.act != 0))  & input$max == 0)
+    {
+      college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))))
+    }
+    else if(input$major == "None" & ((input$sat.reading == 0 & input$sat.writing == 0 & input$sat.math == 0)|(input$score.act == 0))  & input$max != 0)
+    {
+      if(input$location == "In state")
       {
-        if(input$location == "In State")
-        {
-          college = subset(college, college)
-          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-        }
-        else if(input$location == "Out State")
-        {
-          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-        }
+        college %>% filter(TUITIONFEE_IN <= input$max)
       }
-      else if(prefer.2 == "Cost")
+      else if(input$location == "Out state")
       {
-        if(input$location == "In State")
-        {
-          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-        }
-        else if(input$location == "Out State")
-        {
-          college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
-        }
+        college %>% filter(TUITIONFEE_OUT <= input$max)
       }
     }
-   
-  
+    else if(input$major != "None" & ((input$sat.reading != 0 & input$sat.writing != 0 & input$sat.math != 0)|(input$score.act != 0))  & input$max != 0)
+    {
+      if(input$location == "In state")
+      {
+       college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))) & TUITIONFEE_IN <= input$max & college[,major.data.index()] > major.data.frame.mean())
+      }
+      else if(input$location == "Out state")
+      {
+        college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))) & TUITIONFEE_OUT <= input$max & college[,major.data.index()] > major.data.frame.mean())
+      }
+    }
+    else if(input$major != "None" & ((input$sat.reading != 0 & input$sat.writing != 0 & input$sat.math != 0)|(input$score.act != 0))  & input$max == 0)
+    {
+      college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)))  & college[,major.data.index()] > major.data.frame.mean())
+    }
+    else if(input$major != "None" & ((input$sat.reading == 0 & input$sat.writing == 0 & input$sat.math == 0)|(input$score.act == 0))  & input$max != 0)
+    {
+      if(input$location == "In state")
+      {
+        college %>% filter(TUITIONFEE_IN <= input$max & college[,major.data.index()] > major.data.frame.mean())
+      }
+      else if(input$location == "Out state")
+      {
+        college %>% filter(TUITIONFEE_OUT <= input$max & college[,major.data.index()] > major.data.frame.mean())
+      }
+    }
+    else if(input$major == "None" & ((input$sat.reading != 0 & input$sat.writing != 0 & input$sat.math != 0)|(input$score.act != 0))  & input$max != 0)
+    {
+      if(input$location == "In state")
+      {
+        college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))) & TUITIONFEE_IN <= input$max)
+      }
+      else if(input$location == "Out state")
+      {
+        college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))) & TUITIONFEE_OUT <= input$max)
+      }
+    }
     
-  
     })
+  output$map=renderUI({
+    leafletOutput('myMap', width = "100%", height = 700)
+  })
+  
   
   output$myMap = renderLeaflet({
     leaflet() %>%
