@@ -10,7 +10,13 @@ library(dplyr)
 #colnames(map)<-c("lon", "lat", "degree")
 #map$conm<-college$INSTNM
 #map<-na.omit(map)
-college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
+
+
+#college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
+
+college = read.csv("D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data/school.select.csv",header = TRUE)
+
+
 major = c("Agriculture, Agriculture Operations, And Related Sciences","Natural Resources And Conservation", "Architecture And Related Services","Area, Ethnic, Cultural, Gender, And Group Studies"," Communication, Journalism, And Related Programs","Communications Technologies/Technicians And Support Services","Computer And Information Sciences And Support Services","Personal And Culinary Services"," Education","Engineering","Engineering Technologies And Engineering-Related Fields","Foreign Languages, Literatures, And Linguistics"," Family And Consumer Sciences/Human Sciences","Legal Professions And Studies","English Language And Literature/Letters","Liberal Arts And Sciences, General Studies And Humanities","Library Science"," Biological And Biomedical Sciences","Mathematics And Statistics","Military Technologies And Applied Sciences","Multi/Interdisciplinary Studies","Parks, Recreation, Leisure, And Fitness Studies","Philosophy And Religious Studies","Theology And Religious Vocations"," Physical Sciences"," Science Technologies/Technicians"," Psychology"," Homeland Security, Law Enforcement, Firefighting And Related Protective Services","Public Administration And Social Service Professions","Social Sciences","Construction Trades","Mechanic And Repair Technologies/Technicians","Precision Production","Transportation And Materials Moving","Visual And Performing Arts","Health Professions And Related Programs","Business, Management, Marketing, And Related Support Services","History")
 major.index =c("PCIP01",
                "PCIP03",
@@ -52,7 +58,7 @@ major.index =c("PCIP01",
                "PCIP54")
 shinyApp(
 ui = fluidPage(
-  navbarPage("Our App's Name", theme="styles.css",
+  navbarPage("Our App's Name",
               tabPanel("Locate Your School!",
                        sidebarLayout(
                          sidebarPanel(  
@@ -68,10 +74,11 @@ ui = fluidPage(
                                        fluidRow(column(3,numericInput("sat.reading","SAT Read",value=0,min=0,max=100)),
                                        column(3,numericInput("sat.math","SAT Math",value=0,min=0,max=100),offset = 1),
                                        column(3,numericInput("sat.writing","SAT Write",value=0,min=20,max=100),offset = 1)),
-                                       fluidRow(column(11,numericInput("score.act","ACT Scores",value=15,min=0,max=36))),
-                                       fluidRow(column(6,checkboxGroupInput("in","In or Out State?",choices = c("In state", "Out state"),selected = "In state"))),
-                                       fluidRow(column(11,numericInput("max","Your Maximum acceptable Tution",min = 0, max = 51010, value = 0))),
-
+                                       fluidRow(column(11,numericInput("score.act","ACT Scores",value=0,min=0,max=36))),
+                                       fluidRow(column(6,checkboxGroupInput("location","In or Out State?",choices = c("In state", "Out state"),selected = "In state"))),
+                                       fluidRow(column(11,numericInput("max","Your Maximum acceptable Tution In state",min = 0, max = 51010, value = 0))),
+                                       fluidRow(column(11,verbatimTextOutput("text"))),
+                                       fluidRow(column(5,checkboxGroupInput("prefer.1","Most",choices = c("Major","Grade","Cost"))),column(5,checkboxGroupInput("prefer.2","Second most",choices = c("Major","Grade","Cost")))),
                                        #radioButtons("cost","Preferred Cost of Attendence",choices=c("NONE","$2000-$2999","$3000-$3999"),selected = "NONE"),
                                        #checkboxGroupInput("stat","Start Comparison!",choices="Show stats!",selected = NULL),
                                        actionButton("search", "Start Searching!")
@@ -131,19 +138,64 @@ ui = fluidPage(
 server = function(input, output){
   
   output$map=renderUI({
-    leafletOutput('myMap', width = "300%", height = 700)
+    leafletOutput('myMap', width = "100%", height = 700)
                       })
   
   school.selection = eventReactive(input$search,{
-    college %>% filter(ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) %>% slice(1:2)
-  })
+    if(input$prefer.1 == "Major")#"Major","Grade","Cost"
+    {
+      if(prefer.2 == "Grade")
+      {
+        
+      }
+      else if(prefer.2 == "Cost")
+      {
+        
+      }
+    }
+    else if(input$prefer.1 == "Grade")
+    {
+      if(input$prefer.2 == "Major")
+      {
+        
+      }
+      else if(input$prefer.2 == "Cost")
+      {
+        
+      }
+    }
+    else if(input$prefer.1 =="Cost")
+    {
+      if(input$prefer.2 == "Major")
+      {
+        
+      }
+      else if(input$prefer.2 =="Grade")
+      {
+        
+      }
+      
+    }
+    if(input$location == "In State")
+    {
+      college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+    }
+    else if(input$location == "Out State")
+    {
+      college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math))) & (TUITIONFEE_IN <= input$max)) %>% slice(1:2)
+    }
+  
+    })
   
   output$myMap = renderLeaflet({
     leaflet() %>%
-      setView(lng = -73.9857, lat = 40.7484, zoom = 12) %>%
+      setView(lng = -73.9857, lat = 40.7484, zoom = 6) %>%
       addProviderTiles("CartoDB.Positron") %>%
       addCircleMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = school.selection()$INSTNM)
                          })
+  output$text = renderPrint({
+    "Which Conern you the most?"
+  })
   output$test.1 = renderPrint({
     "Our Graphs go to here...."
                           })
