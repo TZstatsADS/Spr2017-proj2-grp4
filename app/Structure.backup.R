@@ -76,11 +76,16 @@ ui = fluidPage(
                                        column(3,numericInput("sat.math","SAT Math",value=0,min=0,max=100),offset = 1),
                                        column(3,numericInput("sat.writing","SAT Write",value=0,min=20,max=100),offset = 1)),
                                        fluidRow(column(11,numericInput("score.act","ACT Scores",value=0,min=0,max=36))),
-                                       fluidRow(column(6,checkboxGroupInput("location","In or Out State?",choices = c("In state", "Out state"),selected = "In state"))),
-                                       fluidRow(column(11,numericInput("max","Your Maximum acceptable Tution In state",min = 0, max = 51010, value = 0))),
+                                       fluidRow(
+                                                wellPanel(
+                                                  checkboxGroupInput("location","In State?",choices = c("In state", "Out state"),selected = "In state"),
+                                                  numericInput("max","Maximum acceptable Tution",min = 0, max = 51010, value = 0))),
                                        #radioButtons("cost","Preferred Cost of Attendence",choices=c("NONE","$2000-$2999","$3000-$3999"),selected = "NONE"),
                                        #checkboxGroupInput("stat","Start Comparison!",choices="Show stats!",selected = NULL),
-                                       actionButton("search", "Start Searching!")
+                                       fluidRow(
+                                         wellPanel(actionButton("search", "Start Searching!"),
+                                                   checkboxInput("stat","Demographic")
+                                                ))
                                        #sliderInput("Alt","Altitude",min=40.5,max=45.04,step = 0.0001,value = 40.7484),
                                        #sliderInput("Long","Longitude",min=-80.52,max=-71.95,step = 0.0001,value=-73.9857)
                                                #Do not forget to add comma, if you want to initate moveable panel.
@@ -100,7 +105,7 @@ ui = fluidPage(
                                 #       )
                                 #        ),
                                   
-                       
+                         #div(class="outer",tags$head(includeCSS("styles.css")),
                          uiOutput("map")
                                )
                        )
@@ -211,11 +216,12 @@ server = function(input, output){
   
   
   output$myMap = renderLeaflet({
-    leaflet() %>%
-      setView(lng = -73.9857, lat = 40.7484, zoom = 6) %>%
-      addProviderTiles("CartoDB.Positron") %>%
+    leaflet()%>%
+      setView(lng = -73.9857, lat = 40.7484, zoom = 6)%>%
+      addProviderTiles("CartoDB.Positron")%>%
       addCircleMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = school.selection()$INSTNM)
-                         })
+                         
+    })
   
   
   
