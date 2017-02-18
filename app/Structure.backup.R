@@ -72,22 +72,27 @@ ui = fluidPage(
                                      
                                        #sliderInput("stat","start Comparison",min=1,max=20,step=1,value =1)
                                        fluidRow(column(11,selectInput("major","Your Major",choices = c("None",major),selected = "None"))),
-                                       fluidRow(column(3,numericInput("sat.reading","SAT Read",value=0,min=0,max=100)),
-                                       column(3,numericInput("sat.math","SAT Math",value=0,min=0,max=100),offset = 1),
-                                       column(3,numericInput("sat.writing","SAT Write",value=0,min=20,max=100),offset = 1)),
-                                       fluidRow(column(11,numericInput("score.act","ACT Scores",value=0,min=0,max=36))),
+                                       fluidRow(column(3,numericInput("sat.reading","SAT Read",value=0,min=0,max=800)),
+                                       column(3,numericInput("sat.math","SAT Math",value=0,min=0,max=800),offset = 1),
+                                       column(3,numericInput("sat.writing","SAT Write",value=0,min=20,max=800),offset = 1)),
+                                       fluidRow(column(11,numericInput("score.act","ACT Cumulative Scores",value=0,min=0,max=36))),
                                        fluidRow(
                                                 wellPanel(
-                                                  radioButtons("location","In State?",choices = c("In state", "Out state"),selected = "In state"),
-                                                  numericInput("max","Maximum acceptable Tution",min = 0, max = 51010, value = 0))),
+                                                  fluidRow(
+                                                    column(width = 5,numericInput("max","Maximum Tution",min = 0, max = 51010, value = 0)),
+                                                    column(width = 5, offset = 1,radioButtons("location","State Resident?",choices = c("Yes", "No"),selected = "Yes", inline = TRUE))
+                                                  ))),
                                        #radioButtons("cost","Preferred Cost of Attendence",choices=c("NONE","$2000-$2999","$3000-$3999"),selected = "NONE"),
                                        #checkboxGroupInput("stat","Start Comparison!",choices="Show stats!",selected = NULL),
                                        fluidRow(
                                          wellPanel(
-                                           selectInput("Focus","Area of Focus",choices = c("New York State", "New York City"), selected = "New York State"),
-                                           actionButton("search", "Start Searching!")
+                                           #area.frame = data.frame(location = ,, )
+                                           
+                                           selectInput("Focus","Area of Focus",choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate")
                                                    
-                                                ))
+                                                )),
+                                       actionButton("search", "Start Searching!")
+                                       
                                        #sliderInput("Alt","Altitude",min=40.5,max=45.04,step = 0.0001,value = 40.7484),
                                        #sliderInput("Long","Longitude",min=-80.52,max=-71.95,step = 0.0001,value=-73.9857)
                                                #Do not forget to add comma, if you want to initate moveable panel.
@@ -144,12 +149,53 @@ ui = fluidPage(
 server = function(input, output){
   
   mapping = reactive({
+    
     if(input$Focus == "New York State")
-    {
-      list(X=-73.9857,Y=40.7484,Z=6)
-    }
+      {
+        list(X=-74.2179,Y = 43.2994, Z = 6)
+      }
     else if(input$Focus == "New York City")
-      list(X=-74.0059,Y=40.7128,Z=10)
+    {
+      list(X=-74.0059,Y=40.7128,Z=11)
+    }
+    else if(input$Focus == "Western New York")
+    {
+      list(X=-78.429924,Y=42.083637,Z=11)
+    }
+    else if(input$Focus == "Finger Lakes")
+    {
+      list(X=-77.610924,Y=43.1610,Z=11)
+    }
+    else if(input$Focus == "Southern Tier")
+    {
+      list(X=-76.5019,Y=42.4440,Z=11)
+    }
+    else if(input$Focus == "Central New York")
+    {
+      list(X=-76.154480,Y=43.088947,Z=11)
+    }
+    else if(input$Focus == "North Country")
+    {
+      list(X=-74.1713,Y=43.4657,Z=11)
+    }
+    else if(input$Focus == "Mohawk Valley")
+    {
+      list(X=-74.8596,Y=43.0434,Z=11)
+    }
+    else if(input$Focus == "Capital District")
+    {
+      list(X=-73.756233,Y=42.652580,Z=11)
+    }
+    else if(input$Focus == "Hudson Valley")
+    {
+      list(X=-74.0104,Y=41.5034,Z=11)
+    }
+    else if(input$Focus == "Long Island")
+    {
+      list(X=-72.9933,Y=40.8858,Z=11)
+    }
+      
+    
   })
   
   major.data.index = reactive({
@@ -173,22 +219,22 @@ server = function(input, output){
     }
     else if(input$major == "None" & ((input$sat.reading == 0 & input$sat.writing == 0 & input$sat.math == 0)|(input$score.act == 0))  & input$max != 0)
     {
-      if(input$location == "In state")
+      if(input$location == "Yes")
       {
         college %>% filter(TUITIONFEE_IN <= input$max)
       }
-      else if(input$location == "Out state")
+      else if(input$location == "No")
       {
         college %>% filter(TUITIONFEE_OUT <= input$max)
       }
     }
     else if(input$major != "None" & ((input$sat.reading != 0 & input$sat.writing != 0 & input$sat.math != 0)|(input$score.act != 0))  & input$max != 0)
     {
-      if(input$location == "In state")
+      if(input$location == "Yes")
       {
        college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))) & TUITIONFEE_IN <= input$max & college[,major.data.index()] > major.data.frame.mean())
       }
-      else if(input$location == "Out state")
+      else if(input$location == "No")
       {
         college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))) & TUITIONFEE_OUT <= input$max & college[,major.data.index()] > major.data.frame.mean())
       }
@@ -199,22 +245,22 @@ server = function(input, output){
     }
     else if(input$major != "None" & ((input$sat.reading == 0 & input$sat.writing == 0 & input$sat.math == 0)|(input$score.act == 0))  & input$max != 0)
     {
-      if(input$location == "In state")
+      if(input$location == "Yes")
       {
         college %>% filter(TUITIONFEE_IN <= input$max & college[,major.data.index()] > major.data.frame.mean())
       }
-      else if(input$location == "Out state")
+      else if(input$location == "No")
       {
         college %>% filter(TUITIONFEE_OUT <= input$max & college[,major.data.index()] > major.data.frame.mean())
       }
     }
     else if(input$major == "None" & ((input$sat.reading != 0 & input$sat.writing != 0 & input$sat.math != 0)|(input$score.act != 0))  & input$max != 0)
     {
-      if(input$location == "In state")
+      if(input$location == "Yes")
       {
         college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))) & TUITIONFEE_IN <= input$max)
       }
-      else if(input$location == "Out state")
+      else if(input$location == "No")
       {
         college %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))) & TUITIONFEE_OUT <= input$max)
       }
@@ -227,7 +273,11 @@ server = function(input, output){
   
   
   output$myMap = renderLeaflet({
-    leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("CartoDB.Positron")%>%addCircleMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = school.selection()$INSTNM)
+    leaflet()%>%
+      setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
+      addProviderTiles("CartoDB.Positron")%>%
+      addCircleMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = school.selection()$INSTNM)%>%
+      addProviderTiles("Esri.WorldImagery",options = providerTileOptions(opacity = 1))
                          
     })
   
