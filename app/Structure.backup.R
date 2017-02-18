@@ -69,35 +69,26 @@ ui = fluidPage(
                           #           height = 600,
                            #          draggable = TRUE,
                                      #cursor = "move",
-                                     
-                                       #sliderInput("stat","start Comparison",min=1,max=20,step=1,value =1)
+                                     fluidRow(wellPanel(
                                        fluidRow(column(11,selectInput("major","Your Major",choices = c("None",major),selected = "None"))),
                                        fluidRow(column(3,numericInput("sat.reading","SAT Read",value=0,min=0,max=800)),
                                        column(3,numericInput("sat.math","SAT Math",value=0,min=0,max=800),offset = 1),
                                        column(3,numericInput("sat.writing","SAT Write",value=0,min=20,max=800),offset = 1)),
-                                       fluidRow(column(11,numericInput("score.act","ACT Cumulative Scores",value=0,min=0,max=36))),
+                                       fluidRow(column(11,numericInput("score.act","ACT Cumulative Scores",value=0,min=0,max=36))))),
                                        fluidRow(
                                                 wellPanel(
                                                   fluidRow(
                                                     column(width = 5,numericInput("max","Maximum Tution",min = 0, max = 51010, value = 0)),
                                                     column(width = 5, offset = 1,radioButtons("location","State Resident?",choices = c("Yes", "No"),selected = "Yes", inline = TRUE))
                                                   ))),
-                                       #radioButtons("cost","Preferred Cost of Attendence",choices=c("NONE","$2000-$2999","$3000-$3999"),selected = "NONE"),
-                                       #checkboxGroupInput("stat","Start Comparison!",choices="Show stats!",selected = NULL),
                                        fluidRow(
                                          wellPanel(
-                                           #area.frame = data.frame(location = ,, )
-                                           
-                                           selectInput("Focus","Area of Focus",choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate")
-                                                   
+                                           fluidRow(selectInput("Focus","Area of Focus",choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate")),
+                                           fluidRow(radioButtons("opt","Map options",choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE))
                                                 )),
                                        actionButton("search", "Start Searching!")
                                        
-                                       #sliderInput("Alt","Altitude",min=40.5,max=45.04,step = 0.0001,value = 40.7484),
-                                       #sliderInput("Long","Longitude",min=-80.52,max=-71.95,step = 0.0001,value=-73.9857)
-                                               #Do not forget to add comma, if you want to initate moveable panel.
-                            #         style = "opacity: 0.9"
-                             #        )
+                             
                                       ),
                        mainPanel(
                        #conditionalPanel("input.stat =='Show stats!'",
@@ -198,6 +189,18 @@ server = function(input, output){
     
   })
   
+  mapping.opt = reactive({
+    
+    if(input$opt=="Regular")
+    {
+      list(O=0.1)
+    }
+    else if(input$opt=="Satellite")
+    {
+      list(O=0.95)
+    }
+  })
+  
   major.data.index = reactive({
     major.frame[which(major.frame$major == input$major),"index"]#major  index
   })
@@ -277,7 +280,7 @@ server = function(input, output){
       setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
       addProviderTiles("CartoDB.Positron")%>%
       addCircleMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = school.selection()$INSTNM)%>%
-      addProviderTiles("Esri.WorldImagery",options = providerTileOptions(opacity = 1))
+      addProviderTiles("Esri.WorldImagery",options = providerTileOptions(opacity = mapping.opt()$O))
                          
     })
   
