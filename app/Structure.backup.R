@@ -147,43 +147,43 @@ server = function(input, output){
       }
     else if(input$Focus == "New York City")
     {
-      list(X=-74.0059,Y=40.7128,Z=11)
+      list(X=-73.989308,Y=40.741895,Z=12)
     }
     else if(input$Focus == "Western New York")
     {
-      list(X=-78.429924,Y=42.083637,Z=11)
+      list(X=-78.8784,Y=42.8864, Z=8)
     }
     else if(input$Focus == "Finger Lakes")
     {
-      list(X=-77.610924,Y=43.1610,Z=11)
+      list(X=-77.610924,Y=43.1610,Z=9)
     }
     else if(input$Focus == "Southern Tier")
     {
-      list(X=-76.5019,Y=42.4440,Z=11)
+      list(X=-76.5019,Y=42.4440,Z=9)
     }
     else if(input$Focus == "Central New York")
     {
-      list(X=-76.154480,Y=43.088947,Z=11)
+      list(X=-76.154480,Y=43.088947,Z=9)
     }
     else if(input$Focus == "North Country")
     {
-      list(X=-74.1713,Y=43.4657,Z=11)
+      list(X=-74.1713,Y=43.4657,Z=9)
     }
     else if(input$Focus == "Mohawk Valley")
     {
-      list(X=-74.8596,Y=43.0434,Z=11)
+      list(X=-74.8596,Y=43.0434,Z=9)
     }
     else if(input$Focus == "Capital District")
     {
-      list(X=-73.756233,Y=42.652580,Z=11)
+      list(X=-73.756233,Y=42.652580,Z=9)
     }
     else if(input$Focus == "Hudson Valley")
     {
-      list(X=-74.0104,Y=41.5034,Z=11)
+      list(X=-74.0104,Y=41.5034,Z=9)
     }
     else if(input$Focus == "Long Island")
     {
-      list(X=-72.9933,Y=40.8858,Z=11)
+      list(X=-72.9933,Y=40.8858,Z=9)
     }
       
     
@@ -286,9 +286,7 @@ server = function(input, output){
   
   
   
-  output$text = renderPrint({
-    "Which Conerns you the most?"
-  })
+  
   output$test.1 = renderPrint({
     "Our Graphs go to here...."
                           })
