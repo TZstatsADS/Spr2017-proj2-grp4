@@ -91,12 +91,13 @@ ui = fluidPage(
                                              fluidRow(radioButtons("opt","Map options",choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE))
                                            )),
                                          actionButton("search", "Start Searching!")
-                                    
-                                       
-                             
-                     
-                         
-                                                      )
+                                    ),
+                               absolutePanel(id = "control", class = "panel panel-default", fixed = TRUE,
+                                             draggable = TRUE, top = 60, right = 20, bottom = "auto",
+                                             width = 500, height = "auto", cursor = "move",
+                                             fluidRow(column(10,selectInput("Testing","Your Major",choices = c("None",major),selected = "None")))
+                                             
+                                             )
                        )),
                       tabPanel("Comparision!",
                        fluidRow(
