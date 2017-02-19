@@ -86,7 +86,7 @@ server = function(input, output){
       setView(lng = -74, lat = 42, zoom = 6) %>%
       addTiles() %>%
       addCircleMarkers(lng = map.plot.date()$long, lat = map.plot.date()$alt, popup = c("Testing For Project"))%>%
-    addCircleMarkers(lng = map$lon, lat = map$lat, fillColor=cPal(map$degree), stroke=FALSE, fillOpacity=0.8, popup=map$conm) %>%
+    addCircleMarkers(lng = map$lon, lat = map$lat, clusterOptions = markerClusterOptions(),fillColor=cPal(map$degree), stroke=FALSE, fillOpacity=0.8, popup=map$conm) %>%
       addLegend("bottomright", pal = cPal, values = map$degree,title = "Degree",opacity = 1)
     })
                                 }
