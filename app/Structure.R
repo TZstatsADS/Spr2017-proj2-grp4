@@ -65,7 +65,7 @@ ui = fluidPage(
                            #Our Search Panel
                            absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                                          draggable = TRUE, top = 60, left = 20, bottom = "auto",
-                                         width = 500, height = "auto", cursor = "move",
+                                         width = 410, height = "auto", cursor = "move",
                                          fluidRow(wellPanel(
                                            fluidRow(column(10,selectInput("major","Your Major",choices = c("None",major),selected = "None"))),
                                            fluidRow(column(3,numericInput("sat.reading","SAT Read",value=0,min=0,max=800)),
