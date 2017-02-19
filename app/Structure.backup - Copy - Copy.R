@@ -95,8 +95,11 @@ ui = fluidPage(
                                absolutePanel(id = "control", class = "panel panel-default", fixed = TRUE,
                                              draggable = TRUE, top = 60, right = 20, bottom = "auto",
                                              width = 500, height = "auto", cursor = "move",
-                                             fluidRow(column(10,selectInput("Testing","Your Major",choices = c("None",major),selected = "None")))
-                                             
+                                             fluidPage( tabsetPanel(
+                                               tabPanel("tab 1", "contents"),
+                                               tabPanel("tab 2", "contents"),
+                                               tabPanel("tab 3", "contents")))
+
                                              )
                        )),
                       tabPanel("Comparision!",
