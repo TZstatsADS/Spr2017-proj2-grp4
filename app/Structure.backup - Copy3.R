@@ -7,7 +7,7 @@ library(dplyr)
 
 
 
-#college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
+college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
 
 #map<-as.data.frame(cbind(college$LONGITUDE, college$LATITUDE, college$HIGHDEG_1))
 #colnames(map)<-c("lon", "lat", "degree")
@@ -16,7 +16,7 @@ library(dplyr)
 
 
 
-college = read.csv("D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data/school.select.csv",header = TRUE)
+# college = read.csv("D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data/school.select.csv",header = TRUE)
 
 
 major = c("Agriculture, Agriculture Operations, And Related Sciences","Natural Resources And Conservation", "Architecture And Related Services","Area, Ethnic, Cultural, Gender, And Group Studies"," Communication, Journalism, And Related Programs","Communications Technologies/Technicians And Support Services","Computer And Information Sciences And Support Services","Personal And Culinary Services"," Education","Engineering","Engineering Technologies And Engineering-Related Fields","Foreign Languages, Literatures, And Linguistics"," Family And Consumer Sciences/Human Sciences","Legal Professions And Studies","English Language And Literature/Letters","Liberal Arts And Sciences, General Studies And Humanities","Library Science"," Biological And Biomedical Sciences","Mathematics And Statistics","Military Technologies And Applied Sciences","Multi/Interdisciplinary Studies","Parks, Recreation, Leisure, And Fitness Studies","Philosophy And Religious Studies","Theology And Religious Vocations"," Physical Sciences"," Science Technologies/Technicians"," Psychology"," Homeland Security, Law Enforcement, Firefighting And Related Protective Services","Public Administration And Social Service Professions","Social Sciences","Construction Trades","Mechanic And Repair Technologies/Technicians","Precision Production","Transportation And Materials Moving","Visual And Performing Arts","Health Professions And Related Programs","Business, Management, Marketing, And Related Support Services","History")
@@ -292,20 +292,20 @@ server = function(input, output){
     #radioButtons("output","",choices=c("Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time"))
     if(input$output == "Degree")
     {
-      list(info=school.selection[,c("LONGITUDE","LATITUDE","HIGHDEG_1")], color = c("blue","green", "yellow", "orange", "red"))
+      list(info=school.selection()[,c("LONGITUDE","LATITUDE","HIGHDEG_1")], color = c("blue","green", "yellow", "orange", "red"))
       
     }
     else if(input$output == "Two Year vs Four Year")
     {
-      list(info=school.selection[,c("LONGITUDE","LATITUDE","2or4")],color = c("yellow","red"))
+      list(info=school.selection()[,c("LONGITUDE","LATITUDE","twoorfour")],color = c("yellow","red"))
     }
     else if(input$output == "Transfer rate")
     {
-      list(info=school.selection[,c("LONGITUDE","LATITUDE","loworhigh")],color = c("yellow","red"))
+      list(info=school.selection()[,c("LONGITUDE","LATITUDE","loworhigh")],color = c("yellow","red"))
     }
     else if(input$output == "Full vs Part Time")
     {
-      list(info=school.selection[,c("LONGITUDE","LATITUDE","partorfull")],color = c("yellow","red"))
+      list(info=school.selection()[,c("LONGITUDE","LATITUDE","partorfull")],color = c("yellow","red"))
     }
     else if(input$output == "None")
     {
@@ -325,7 +325,7 @@ server = function(input, output){
     leaflet()%>%
       setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
       addProviderTiles("NASAGIBS.ViirsEarthAtNight2012")%>%
-      addCircleMarkers(lng = outputmap[[1]][,1], lat = outputmap[[1]][,2],clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = outputmap[[2]],domain = as.character(outputmap[[1]][,3]))(as.character(outputmap[[1]][,3])), stroke=FALSE, fillOpacity=0.8)
+      addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)
     
     
   })
