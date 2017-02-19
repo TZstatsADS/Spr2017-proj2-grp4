@@ -1,5 +1,3 @@
-#Structure of our APP:
-#Have not been able to dynamically change the opacity of the panel. 
 library(shiny)
 library(ggmap)
 library(leaflet)
@@ -7,16 +5,9 @@ library(dplyr)
 
 
 
-college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
+#college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
 
-#map<-as.data.frame(cbind(college$LONGITUDE, college$LATITUDE, college$HIGHDEG_1))
-#colnames(map)<-c("lon", "lat", "degree")
-#map$conm<-college$INSTNM
-#map<-na.omit(map)
-
-
-
-# college = read.csv("D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data/school.select.csv",header = TRUE)
+college = read.csv("D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data/school.select.csv",header = TRUE)
 
 
 major = c("Agriculture, Agriculture Operations, And Related Sciences","Natural Resources And Conservation", "Architecture And Related Services","Area, Ethnic, Cultural, Gender, And Group Studies"," Communication, Journalism, And Related Programs","Communications Technologies/Technicians And Support Services","Computer And Information Sciences And Support Services","Personal And Culinary Services"," Education","Engineering","Engineering Technologies And Engineering-Related Fields","Foreign Languages, Literatures, And Linguistics"," Family And Consumer Sciences/Human Sciences","Legal Professions And Studies","English Language And Literature/Letters","Liberal Arts And Sciences, General Studies And Humanities","Library Science"," Biological And Biomedical Sciences","Mathematics And Statistics","Military Technologies And Applied Sciences","Multi/Interdisciplinary Studies","Parks, Recreation, Leisure, And Fitness Studies","Philosophy And Religious Studies","Theology And Religious Vocations"," Physical Sciences"," Science Technologies/Technicians"," Psychology"," Homeland Security, Law Enforcement, Firefighting And Related Protective Services","Public Administration And Social Service Professions","Social Sciences","Construction Trades","Mechanic And Repair Technologies/Technicians","Precision Production","Transportation And Materials Moving","Visual And Performing Arts","Health Professions And Related Programs","Business, Management, Marketing, And Related Support Services","History")
@@ -71,7 +62,7 @@ ui = fluidPage(
                              includeCSS("styles.css")
                                                    ),
                            uiOutput("map"),
-                     
+                           #Our Search Panel
                            absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                                          draggable = TRUE, top = 60, left = 20, bottom = "auto",
                                          width = 500, height = "auto", cursor = "move",
@@ -94,12 +85,12 @@ ui = fluidPage(
                                            )),
                                          actionButton("search", "Start Searching!")
                                     ),
+                               #Our Panel for the cluster graph
                                absolutePanel(id = "control", class = "panel panel-default", fixed = TRUE,
                                              draggable = TRUE, top = 60, right = 20, bottom = "auto",
                                              width = 500, height = "auto", cursor = "move",
                                              fluidPage( 
                                                uiOutput("map_1"),
-                                               #fluidRow(column(width = 5,radioButtons("output","",choices=c("Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time"),selected ="Degree",inline=TRUE)))
                                                fluidRow(column(width = 5,radioButtons("output","",choices=c("Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time")),selected = "Degree",inline=TRUE))
                                                )
 
@@ -136,6 +127,7 @@ ui = fluidPage(
                 ),
 server = function(input, output){
   
+  #Define interactive coordinates
   mapping = reactive({
     
     if(input$Focus == "New York State")
@@ -186,6 +178,7 @@ server = function(input, output){
     
   })
   
+  #Define interactive map change
   mapping.opt = reactive({
     
     if(input$opt=="Regular")
@@ -198,9 +191,11 @@ server = function(input, output){
     }
   })
   
+  #Get interactive major index
   major.data.index = reactive({
-    major.frame[which(major.frame$major == input$major),"index"]#major  index
+    major.frame[which(major.frame$major == input$major),"index"]
   })
+  
   
   major.data.frame.mean = reactive({
     mean(college[,major.data.index()])
@@ -290,7 +285,6 @@ server = function(input, output){
     })
   
   outputmap = reactive({
-    #radioButtons("output","",choices=c("Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time"))
     if(input$output == "Degree")
     {
       list(info=school.selection()[,c("LONGITUDE","LATITUDE","HIGHDEG_1")], color = c("blue","green", "yellow", "orange", "red"))
@@ -317,16 +311,14 @@ server = function(input, output){
     leafletOutput('myMap_1', width = "100%", height = 500)
   })
  
-   #cPal <- colorFactor(palette = c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1)
-  
+
   output$myMap_1 = renderLeaflet({
     leaflet()%>%
       setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
       addProviderTiles("NASAGIBS.ViirsEarthAtNight2012")%>%
       addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%
       addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)
-      #addMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions())
-    
+
   })
   
   
@@ -349,8 +341,3 @@ server = function(input, output){
 )
 
 
-#Add Multiple marker on map
-#map.1 = leaflet() %>%
- # setView(lng = -74, lat = 42, zoom = 6) %>%
-  #addTiles() %>%
-  #addCircleMarkers(lng = c(-74.121212121,-73.12313212312313), lat = c(42.1231212123,41.12345738453), popup = c("HAHA","haskjdhasd"))
