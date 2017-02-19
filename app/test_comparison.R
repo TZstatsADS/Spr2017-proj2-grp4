@@ -1,7 +1,7 @@
 library(shiny)
 library(plotly)
 
-college<-read.csv("../data/College2014_15.csv",stringsAsFactors = F,na.strings = "NULL")
+college<-read.csv("../data/College2014_15_new.csv",stringsAsFactors = F,na.strings = "NULL")
 
 ui <- fluidPage(
         titlePanel("Comparing two schools!"),
@@ -143,7 +143,7 @@ ui <- fluidPage(
 )
 server <- function(input, output) {
         school <- c("Cornell University", "Columbia University in the City of New York")
-        college<-read.csv("../data/College2014_15.csv",stringsAsFactors = F,na.strings = "NULL")
+        college<-read.csv("../data/College2014_15_new.csv",stringsAsFactors = F,na.strings = "NULL")
         
         my_schools = reactive({c(input$input1,input$input2)})
         
