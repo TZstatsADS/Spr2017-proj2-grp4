@@ -1,9 +1,19 @@
 library(shiny)
 library(plotly)
 
+college<-read.csv("../data/College2014_15.csv",stringsAsFactors = F,na.strings = "NULL")
 
 ui <- fluidPage(
         titlePanel("Comparing two schools!"),
+        
+        fluidRow(splitLayout(cellWidths = c("50%","50%"),
+                             selectInput("input1",label="Select a School",choices=college$INSTNM,size=7,selectize=F),
+                             selectInput("input2",label="Select a School",choices=college$INSTNM,size=7,selectize=F)
+        )),
+        
+        fluidRow(splitLayout(cellWidths = c("50%","50%"),
+                             imageOutput("logo1"),imageOutput("logo2")
+                )),
         
         fluidRow(align="center",
                  style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
@@ -110,38 +120,52 @@ ui <- fluidPage(
         
         # === Bar whit corresponding widget
         fluidRow(h2("Major Diversity"),
-                splitLayout(
-                #Barplot
-                column(5, plotlyOutput("my_barplot1" , height = "300px" ,  width = "480px")   ),
-                column(5, plotlyOutput("my_barplot2" , height = "300px" ,  width = "480px")   )
+                splitLayout(cellWidths = c("50%","50%"),
+                plotlyOutput("my_barplot1" , height = "500px"),
+                plotlyOutput("my_barplot2" , height = "500px")
                 )
                 
         ),br(),
         # === pie chart of ethnicity
-        fluidRow(h2("Degree-Seeking Undergraduates by Ethnicity"),
+        fluidRow(align="justify",h2("Degree-Seeking Undergraduates by Ethnicity"),
                  splitLayout(cellWidths = c("50%","50%"),
-                             plotlyOutput("demographics1"),
-                           plotlyOutput("demographics2"))
+                             plotlyOutput("demographics1",height="730"),
+                           plotlyOutput("demographics2",height="730"))
                  
         ),
-        fluidRow(h2("Degree-Seeking Undergraduates by Gender"),
+        fluidRow(align="center",h2("Degree-Seeking Undergraduates by Gender"),
                  splitLayout(cellWidths = c("50%","50%"),
-                             plotlyOutput("female1"),
-                             plotlyOutput("female2"))
+                             plotlyOutput("female1",height="630"),
+                             plotlyOutput("female2",height="630")
                  
-        )
+        ))
   
 )
 server <- function(input, output) {
         school <- c("Cornell University", "Columbia University in the City of New York")
-        college<-read.csv("College2014_15.csv",stringsAsFactors = F,na.strings = "NULL")
+        college<-read.csv("../data/College2014_15.csv",stringsAsFactors = F,na.strings = "NULL")
         
-        output$school1 = renderText(school1)
+        my_schools = reactive({c(input$input1,input$input2)})
+        
+        output$logo1 = renderImage({
+          filename <- normalizePath(file.path("../data",
+                                              'Tri-State College of Acupuncture School.jpg'))
+          
+          list(src=filename)
+        },deleteFile = FALSE)
+        
+        output$logo2 = renderImage({
+          filename <- normalizePath(file.path("../data",
+                                              'Tri-State College of Acupuncture School.jpg'))
+          
+          list(src=filename)
+        },deleteFile = FALSE)
+        
         ############## get data used to display city
         
         MY_city_display=reactive({
                # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 get.city.outputs <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
                         #get city
@@ -160,7 +184,7 @@ server <- function(input, output) {
         
         MY_iclevel_display=reactive({
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 get.iclevel.outputs <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
                         #get city
@@ -187,7 +211,7 @@ server <- function(input, output) {
         ############## get data used to display control
         MY_control_display=reactive({
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
 
                 get.control.outputs <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
@@ -213,7 +237,7 @@ server <- function(input, output) {
         ############## get data used to display highest degree
         MY_highdeg_display=reactive({
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 
                 get.highdeg.outputs <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
@@ -245,7 +269,7 @@ server <- function(input, output) {
         ############## get data used to display locale
         MY_locale_display=reactive({
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 
                 get.locale.outputs <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
@@ -298,7 +322,7 @@ server <- function(input, output) {
         ############## get data used to display admission rate
         MY_adrate_display=reactive({
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 
                 get.adrate.outputs <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
@@ -316,7 +340,7 @@ server <- function(input, output) {
         ############## get data used to display in-state tuition
         MY_tuitionfee_in_display=reactive({
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 
                 get.tuitionfee_in.outputs <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
@@ -334,7 +358,7 @@ server <- function(input, output) {
         ############## get data used to display out-of-state tuition
         MY_tuitionfee_out_display=reactive({
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 
                 get.tuitionfee_out.outputs <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
@@ -352,7 +376,7 @@ server <- function(input, output) {
         ############## get data used to display out-of-state tuition
         MY_pctfloan_display=reactive({
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 
                 get.pctfloan.outputs <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
@@ -373,7 +397,7 @@ server <- function(input, output) {
         ############## get data used to display ugds
         MY_ugds_display=reactive({
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 
                 get.ugds.outputs <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
@@ -392,7 +416,7 @@ server <- function(input, output) {
         ############## get data used to display instnm
         MY_instnm_display=reactive({
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 
                 get.instnm.outputs <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
@@ -412,7 +436,7 @@ server <- function(input, output) {
         MY_summary_stat=reactive({
                 
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
 
                 get.bargraph.data <- function(data,school){
                         my.text <- "PCIP[0-9][0-9]"
@@ -429,67 +453,44 @@ server <- function(input, output) {
                  return(output)
                 
         })
+        
+        major.names <- c("Agriculture", "Natural Resources and Conservation",
+                         "Architecture", "Group (Gender, Ethnic, etc.) Studies",
+                         "Communication & Journalism", "Communications Technologies",
+                         "Computer & Information Sciences", "Personal & Culinary Services",
+                         "Education", "Engineering","Engieering Technologies",
+                         "Foreign Languages","Consumer/Human Sciences", "Legal Professions",
+                         "English", "General Studies & Humanities", "Library Science", 
+                         "Biological & Biomedical Sciences", "Mathematics & Statistics",
+                         "Military Techologies", "Multi/Interdisciplinary Studies",
+                         "Fitness Studies", "Philosophy & Religious Studies", "Theology",
+                         "Physical Sciences","Science Technologies", "Psychology", 
+                         "Homeland Security", "Public Admin. & Social Service", "Social Sciences",
+                         "Construction Trades", "Mechanic and Repair Technologies", 
+                         "Precision Production", "Transportation","Visual & Performing Arts",
+                         "Health Professions","Business","History")
+        
         output$my_barplot1=renderPlotly({ 
-                
-                # Get the needed reactive objects:
-                
-                summary_stat=MY_summary_stat()
-                my_school_files=school
-
-                major.names <- c("Agriculture", "Natural Resources and Conservation",
-                                 "Architecture", "Group (Gender, Ethnic, etc.) Studies",
-                                 "Communication & Journalism", "Communications Technologies",
-                                 "Computer & Information Sciences", "Personal & Culinary Services",
-                                 "Education", "Engineering","Engieering Technologies",
-                                 "Foreign Languages","Consumer/Human Sciences", "Legal Professions",
-                                 "English", "General Studies & Humanities", "Library Science", 
-                                 "Biological & Biomedical Sciences", "Mathematics & Statistics",
-                                 "Military Techologies", "Multi/Interdisciplinary Studies",
-                                 "Fitness Studies", "Philosophy & Religious Studies", "Theology",
-                                 "Physical Sciences","Science Technologies", "Psychology", 
-                                 "Homeland Security", "Public Admin. & Social Service", "Social Sciences",
-                                 "Construction Trades", "Mechanic and Repair Technologies", 
-                                 "Precision Production", "Transportation","Visual & Performing Arts",
-                                 "Health Professions","Business","History")
                 plot_ly(
                         x = major.names,
-                        y = summary_stat[rownames(summary_stat) == school[1],],
+                        y = MY_summary_stat()[1,],
                         name = "school",
                         type = "bar"
                 ) %>%
-                        layout(title = paste("Major distribution of", school[1]))
+                        layout(title = paste("Major distribution of <br>", my_schools()[1]),
+                               xaxis = list(tickangle=-65),margin=list(b=200))
                 
         })
         
         output$my_barplot2=renderPlotly({ 
-                
-                # Get the needed reactive objects:
-                
-                summary_stat=MY_summary_stat()
-                my_school_files=school
-
-                major.names <- c("Agriculture", "Natural Resources and Conservation",
-                                 "Architecture", "Group (Gender, Ethnic, etc.) Studies",
-                                 "Communication & Journalism", "Communications Technologies",
-                                 "Computer & Information Sciences", "Personal & Culinary Services",
-                                 "Education", "Engineering","Engieering Technologies",
-                                 "Foreign Languages","Consumer/Human Sciences", "Legal Professions",
-                                 "English", "General Studies & Humanities", "Library Science", 
-                                 "Biological & Biomedical Sciences", "Mathematics & Statistics",
-                                 "Military Techologies", "Multi/Interdisciplinary Studies",
-                                 "Fitness Studies", "Philosophy & Religious Studies", "Theology",
-                                 "Physical Sciences","Science Technologies", "Psychology", 
-                                 "Homeland Security", "Public Admin. & Social Service", "Social Sciences",
-                                 "Construction Trades", "Mechanic and Repair Technologies", 
-                                 "Precision Production", "Transportation","Visual & Performing Arts",
-                                 "Health Professions","Business","History")
                 plot_ly(
                         x = major.names,
-                        y = summary_stat[rownames(summary_stat) == school[2],],
+                        y = MY_summary_stat()[2,],
                         name = "school",
                         type = "bar"
                 ) %>%
-                        layout(title = paste("Major distribution of", school[2]))
+                        layout(title = paste("Major distribution of <br>", my_schools()[2]),
+                               xaxis = list(tickangle=-65), margin=list(b=200))
  
         })
         
@@ -498,7 +499,7 @@ server <- function(input, output) {
         MY_ethnicity_data1=reactive({
                 
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 
                 get.pie.chart <- function(data, school){
                         my.text <- "UGDS_2*[A-Z]+"
@@ -536,18 +537,19 @@ server <- function(input, output) {
                 
         })
   
-        output$demographics1 <- renderPlotly(
+        output$demographics1 <-renderPlotly(
                 plot_ly(MY_ethnicity_data1(), labels = ~type, values = ~X1, type = 'pie')%>%
-                        layout(title = paste("Ethnicity diversity of ", school[1]),
+                        layout(title = paste("Ethnicity diversity of <br>", my_schools()[1],"<br>"),
                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+                               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                               legend=list(orientation='h'))
                 
         )     
         
         MY_ethnicity_data2=reactive({
                 
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 
                 get.pie.chart <- function(data, school){
                         my.text <- "UGDS_2*[A-Z]+"
@@ -585,19 +587,21 @@ server <- function(input, output) {
                 
         })
         
-        output$demographics2 <- renderPlotly(
+        output$demographics2 <-
+          renderPlotly(
                 plot_ly(MY_ethnicity_data2(), labels = ~type, values = ~X2, type = 'pie')%>%
-                        layout(title = paste("Ethnicity diversity of ", school[2]),
+                        layout(title = paste("Ethnicity diversity of <br>", my_schools()[2],"<br>"),
                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+                               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                               legend=list(orientation='h'))
                 
-        ) 
+        )
         
         #############get data used to draw pie chart of female students
         MY_female_data1=reactive({
                 
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 
                 get.mf.data <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
@@ -621,14 +625,15 @@ server <- function(input, output) {
         })
         output$female1 <- renderPlotly(
                 plot_ly(MY_female_data1(), labels = ~MY_female_data1()[,2], values = ~MY_female_data1()[,1], type = 'pie') %>%
-                        layout(title = paste("Gender diversity of ", school[1]),
+                        layout(title = paste("Gender diversity of <br>", my_schools()[1]),
                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+                               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                               legend=list(orientation='h'))
         )
         MY_female_data2=reactive({
                 
                 # Get the needed reactive objects:
-                my_schools=school
+                my_schools=c(input$input1,input$input2)
                 
                 get.mf.data <- function(data,school){
                         relevent_data <- data[data$INSTNM == school,]
@@ -652,9 +657,10 @@ server <- function(input, output) {
         })
         output$female2 <- renderPlotly(
                 plot_ly(MY_female_data2(), labels = ~MY_female_data2()[,2], values = ~MY_female_data2()[,1], type = 'pie') %>%
-                        layout(title = paste("Gender diversity of ", school[2]),
+                        layout(title = paste("Gender diversity of <br>", my_schools()[2]),
                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+                               yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                               legend=list(orientation='h'))
         )
         
         
