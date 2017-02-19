@@ -12,9 +12,9 @@ library(dplyr)
 #map<-na.omit(map)
 
 
-college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
+#college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
 
-# college = read.csv("D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data/school.select.csv",header = TRUE)
+college = read.csv("D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data/school.select.csv",header = TRUE)
 
 
 major = c("Agriculture, Agriculture Operations, And Related Sciences","Natural Resources And Conservation", "Architecture And Related Services","Area, Ethnic, Cultural, Gender, And Group Studies"," Communication, Journalism, And Related Programs","Communications Technologies/Technicians And Support Services","Computer And Information Sciences And Support Services","Personal And Culinary Services"," Education","Engineering","Engineering Technologies And Engineering-Related Fields","Foreign Languages, Literatures, And Linguistics"," Family And Consumer Sciences/Human Sciences","Legal Professions And Studies","English Language And Literature/Letters","Liberal Arts And Sciences, General Studies And Humanities","Library Science"," Biological And Biomedical Sciences","Mathematics And Statistics","Military Technologies And Applied Sciences","Multi/Interdisciplinary Studies","Parks, Recreation, Leisure, And Fitness Studies","Philosophy And Religious Studies","Theology And Religious Vocations"," Physical Sciences"," Science Technologies/Technicians"," Psychology"," Homeland Security, Law Enforcement, Firefighting And Related Protective Services","Public Administration And Social Service Professions","Social Sciences","Construction Trades","Mechanic And Repair Technologies/Technicians","Precision Production","Transportation And Materials Moving","Visual And Performing Arts","Health Professions And Related Programs","Business, Management, Marketing, And Related Support Services","History")
@@ -72,19 +72,36 @@ ui = fluidPage(
                      
                            # Shiny versions prior to 0.11 should use class="modal" instead.
                            absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
-                                         draggable = TRUE, top = 60, left = "auto", right = 20, bottom = "auto",
-                                         width = 330, height = "auto",
-                     
-                                    selectInput("major","Your Major",choices = c("None",major),selected = "None"),
-                                    numericInput("sat.reading","SAT Read",value=0,min=0,max=800),
-                                    numericInput("sat.math","SAT Math",value=0,min=0,max=800),
-                                    numericInput("sat.writing","SAT Write",value=0,min=20,max=800),
-                                    numericInput("score.act","ACT Cumulative Scores",value=0,min=0,max=36),
-                                    numericInput("max","Maximum Tution",min = 0, max = 51010, value = 0),
-                                    radioButtons("location","State Resident?",choices = c("Yes", "No"),selected = "Yes", inline = TRUE),
-                                    selectInput("Focus","Area of Focus",choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate"),
-                                    radioButtons("opt","Map options",choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE),
-                                    actionButton("search", "Start Searching!")
+                                         draggable = TRUE, top = 60, left = 20, bottom = "auto",
+                                         width = 500, height = "auto", cursor = "move",
+                                         fluidRow(wellPanel(
+                                           fluidRow(column(11,selectInput("major","Your Major",choices = c("None",major),selected = "None"))),
+                                           fluidRow(column(3,numericInput("sat.reading","SAT Read",value=0,min=0,max=800)),
+                                                    column(3,numericInput("sat.math","SAT Math",value=0,min=0,max=800),offset = 1),
+                                                    column(3,numericInput("sat.writing","SAT Write",value=0,min=20,max=800),offset = 1)),
+                                           fluidRow(column(11,numericInput("score.act","ACT Cumulative Scores",value=0,min=0,max=36))))),
+                                         fluidRow(
+                                           wellPanel(
+                                             fluidRow(
+                                               column(width = 5,numericInput("max","Maximum Tution",min = 0, max = 51010, value = 0)),
+                                               column(width = 5, offset = 1,radioButtons("location","State Resident?",choices = c("Yes", "No"),selected = "Yes", inline = TRUE))
+                                             ))),
+                                         fluidRow(
+                                           wellPanel(
+                                             fluidRow(selectInput("Focus","Area of Focus",choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate")),
+                                             fluidRow(radioButtons("opt","Map options",choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE))
+                                           )),
+                                         actionButton("search", "Start Searching!")
+                                    #wellPanel(selectInput("major","Your Major",choices = c("None",major),selected = "None")),
+                                    #numericInput("sat.reading","SAT Read",value=0,min=0,max=800),
+                                    #numericInput("sat.math","SAT Math",value=0,min=0,max=800),
+                                    #numericInput("sat.writing","SAT Write",value=0,min=20,max=800),
+                                    #numericInput("score.act","ACT Cumulative Scores",value=0,min=0,max=36),
+                                    #numericInput("max","Maximum Tution",min = 0, max = 51010, value = 0),
+                                    #radioButtons("location","State Resident?",choices = c("Yes", "No"),selected = "Yes", inline = TRUE),
+                                    #selectInput("Focus","Area of Focus",choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate"),
+                                    #radioButtons("opt","Map options",choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE),
+                                    #actionButton("search", "Start Searching!")
                                        
                              
                      
