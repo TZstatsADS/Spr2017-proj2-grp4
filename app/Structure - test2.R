@@ -3,13 +3,13 @@
 library(shiny)
 library(ggmap)
 library(leaflet)
-college<-read.csv(file="../data/College2014_15.csv", stringsAsFactors = FALSE,na.strings = "NULL")
-map<-as.data.frame(cbind(college$LONGITUDE, college$LATITUDE, college$HIGHDEG))
+college<-read.csv(file="../data/school.csv", stringsAsFactors = FALSE,na.strings = "NULL")
+map<-as.data.frame(cbind(college$LONGITUDE, college$LATITUDE, college$HIGHDEG_1))
 colnames(map)<-c("lon", "lat", "degree")
 map$conm<-college$INSTNM
 map<-na.omit(map)
 
-cPal <- colorFactor(palette = c("blue","green", "yellow", "red", "black"),domain = map$degree)
+cPal <- colorFactor(palette = c("blue","green", "yellow", "orange", "red"),domain = map$degree)
 
 shinyApp(
 ui = fluidPage(
@@ -87,7 +87,7 @@ server = function(input, output){
       addTiles() %>%
       addCircleMarkers(lng = map.plot.date()$long, lat = map.plot.date()$alt, popup = c("Testing For Project"))%>%
     addCircleMarkers(lng = map$lon, lat = map$lat, clusterOptions = markerClusterOptions(),fillColor=cPal(map$degree), stroke=FALSE, fillOpacity=0.8, popup=map$conm) %>%
-      addLegend("bottomright", pal = cPal, values = map$degree,title = "Degree",opacity = 1)
+      addLegend("bottomright", pal = cPal, values = map$degree,title = "Highest degree awarded",opacity = 1)
     })
                                 }
 )
