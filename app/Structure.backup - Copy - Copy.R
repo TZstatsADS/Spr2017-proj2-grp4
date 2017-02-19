@@ -70,16 +70,15 @@ ui = fluidPage(
                                                    ),
                            uiOutput("map"),
                      
-                           # Shiny versions prior to 0.11 should use class="modal" instead.
                            absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                                          draggable = TRUE, top = 60, left = 20, bottom = "auto",
                                          width = 500, height = "auto", cursor = "move",
                                          fluidRow(wellPanel(
-                                           fluidRow(column(11,selectInput("major","Your Major",choices = c("None",major),selected = "None"))),
+                                           fluidRow(column(10,selectInput("major","Your Major",choices = c("None",major),selected = "None"))),
                                            fluidRow(column(3,numericInput("sat.reading","SAT Read",value=0,min=0,max=800)),
                                                     column(3,numericInput("sat.math","SAT Math",value=0,min=0,max=800),offset = 1),
                                                     column(3,numericInput("sat.writing","SAT Write",value=0,min=20,max=800),offset = 1)),
-                                           fluidRow(column(11,numericInput("score.act","ACT Cumulative Scores",value=0,min=0,max=36))))),
+                                           fluidRow(column(10,numericInput("score.act","ACT Cumulative Scores",value=0,min=0,max=36))))),
                                          fluidRow(
                                            wellPanel(
                                              fluidRow(
@@ -92,16 +91,7 @@ ui = fluidPage(
                                              fluidRow(radioButtons("opt","Map options",choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE))
                                            )),
                                          actionButton("search", "Start Searching!")
-                                    #wellPanel(selectInput("major","Your Major",choices = c("None",major),selected = "None")),
-                                    #numericInput("sat.reading","SAT Read",value=0,min=0,max=800),
-                                    #numericInput("sat.math","SAT Math",value=0,min=0,max=800),
-                                    #numericInput("sat.writing","SAT Write",value=0,min=20,max=800),
-                                    #numericInput("score.act","ACT Cumulative Scores",value=0,min=0,max=36),
-                                    #numericInput("max","Maximum Tution",min = 0, max = 51010, value = 0),
-                                    #radioButtons("location","State Resident?",choices = c("Yes", "No"),selected = "Yes", inline = TRUE),
-                                    #selectInput("Focus","Area of Focus",choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate"),
-                                    #radioButtons("opt","Map options",choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE),
-                                    #actionButton("search", "Start Searching!")
+                                    
                                        
                              
                      
