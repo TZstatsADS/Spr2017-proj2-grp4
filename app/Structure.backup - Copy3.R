@@ -99,7 +99,8 @@ ui = fluidPage(
                                              width = 500, height = "auto", cursor = "move",
                                              fluidPage( 
                                                uiOutput("map_1"),
-                                               fluidRow(column(width = 5,radioButtons("output","",choices=c("None","Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time")),selected = "None",inline=TRUE))
+                                               #fluidRow(column(width = 5,radioButtons("output","",choices=c("Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time"),selected ="Degree",inline=TRUE)))
+                                               fluidRow(column(width = 5,radioButtons("output","",choices=c("Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time")),selected = "Degree",inline=TRUE))
                                                )
 
                                              )
@@ -307,10 +308,7 @@ server = function(input, output){
     {
       list(info=school.selection()[,c("LONGITUDE","LATITUDE","partorfull")],color = c("yellow","red"))
     }
-    else if(input$output == "None")
-    {
-      list(info=college[,c("LONGITUDE","LATITUDE","HIGHDEG_1")], color = c("blue","green", "yellow", "orange", "red"))
-    }
+    
   })
   
   
@@ -325,8 +323,9 @@ server = function(input, output){
     leaflet()%>%
       setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
       addProviderTiles("NASAGIBS.ViirsEarthAtNight2012")%>%
-      addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)
-    
+      addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%
+      addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)
+      #addMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions())
     
   })
   
