@@ -5,16 +5,18 @@ library(ggmap)
 library(leaflet)
 library(dplyr)
 
-#college<-read.csv(file="D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data/College2014_15.csv", stringsAsFactors = FALSE,na.strings = "NULL")
-#map<-as.data.frame(cbind(college$LONGITUDE, college$LATITUDE, college$HIGHDEG))
+
+
+college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
+
+#map<-as.data.frame(cbind(college$LONGITUDE, college$LATITUDE, college$HIGHDEG_1))
 #colnames(map)<-c("lon", "lat", "degree")
 #map$conm<-college$INSTNM
 #map<-na.omit(map)
 
 
-#college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
 
-college = read.csv("D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data/school.select.csv",header = TRUE)
+# college = read.csv("D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data/school.select.csv",header = TRUE)
 
 
 major = c("Agriculture, Agriculture Operations, And Related Sciences","Natural Resources And Conservation", "Architecture And Related Services","Area, Ethnic, Cultural, Gender, And Group Studies"," Communication, Journalism, And Related Programs","Communications Technologies/Technicians And Support Services","Computer And Information Sciences And Support Services","Personal And Culinary Services"," Education","Engineering","Engineering Technologies And Engineering-Related Fields","Foreign Languages, Literatures, And Linguistics"," Family And Consumer Sciences/Human Sciences","Legal Professions And Studies","English Language And Literature/Letters","Liberal Arts And Sciences, General Studies And Humanities","Library Science"," Biological And Biomedical Sciences","Mathematics And Statistics","Military Technologies And Applied Sciences","Multi/Interdisciplinary Studies","Parks, Recreation, Leisure, And Fitness Studies","Philosophy And Religious Studies","Theology And Religious Vocations"," Physical Sciences"," Science Technologies/Technicians"," Psychology"," Homeland Security, Law Enforcement, Firefighting And Related Protective Services","Public Administration And Social Service Professions","Social Sciences","Construction Trades","Mechanic And Repair Technologies/Technicians","Precision Production","Transportation And Materials Moving","Visual And Performing Arts","Health Professions And Related Programs","Business, Management, Marketing, And Related Support Services","History")
@@ -95,7 +97,9 @@ ui = fluidPage(
                                absolutePanel(id = "control", class = "panel panel-default", fixed = TRUE,
                                              draggable = TRUE, top = 60, right = 20, bottom = "auto",
                                              width = 500, height = "auto", cursor = "move",
-                                             fluidPage( tabsetPanel(
+                                             fluidPage( 
+                                               uiOutput("map_1"),
+                                               tabsetPanel(
                                                tabPanel("tab 1", "contents"),
                                                tabPanel("tab 2", "contents"),
                                                tabPanel("tab 3", "contents")))
@@ -267,10 +271,11 @@ server = function(input, output){
       }
     }
     })
+  
   output$map=renderUI({
     leafletOutput('myMap', width = "100%", height = 700)
   })
-  
+ 
   
   output$myMap = renderLeaflet({
     leaflet()%>%
@@ -286,6 +291,21 @@ server = function(input, output){
     })
   
   
+  
+  output$map_1=renderUI({
+    leafletOutput('myMap_1', width = "100%", height = 500)
+  })
+ 
+   #cPal <- colorFactor(palette = c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1)
+  
+  output$myMap_1 = renderLeaflet({
+    leaflet()%>%
+      setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
+      addProviderTiles("NASAGIBS.ViirsEarthAtNight2012")%>%
+      addCircleMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE,clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1)(school.selection()$HIGHDEG_1), stroke=FALSE, fillOpacity=0.8)
+    
+    
+  })
   
   
   output$test.1 = renderPrint({
