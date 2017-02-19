@@ -209,6 +209,10 @@ server = function(input, output){
     mean(college[,major.data.index()])
   })
   
+  major.data.frame.upper = reactive({
+    summary(college[,major.data.index()])[5]
+  })
+  
   school.selection = eventReactive(input$search,{
     
    
