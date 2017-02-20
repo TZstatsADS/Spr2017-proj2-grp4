@@ -603,11 +603,13 @@ server <- function(input, output) {
                         my.text <- "UGDS_2*[A-Z]+"
                         indices <- grepl(my.text,colnames(data))
                         my.data <- data[data$INSTNM==school,indices]
-                        my.data <- my.data[,1:9]
+                        my.data <- as.vector(my.data[1,1:9])
                         demo.names <- c("White","Black","Hispanic","Asian","American Indian/Alaska Native",
                                         "Native Hawaiian/Pacific Islander","2 or More Races","Non-resident Aliens",
                                         "Unknown")
-                        colnames(my.data) <- demo.names
+                        #colnames(my.data) <- demo.names
+                        my.df <- as.data.frame(cbind(my.data,demo.names))
+                        
                         to.remove <- NULL
                         for (i in 1:length(my.data)){
                                 if (my.data[i] == 0 | is.na(my.data[i])){
@@ -616,21 +618,18 @@ server <- function(input, output) {
                         }
                         
                         if (length(my.data) == length(to.remove)){
-                                my.df <- data.frame(1,"Privacy Suppressed")
+                                output.df <- data.frame(1,"Privacy Suppressed")
                                 #colnames(my.df) <- "NA"
-                                return(my.df)
-                        } else {
-                                if (!is.null(to.remove)){
-                                        my.df <- my.data[,-to.remove]
-                                        colnames(my.df) <- demo.names[-to.remove]
-                                        my.df <- cbind(t(my.df),colnames(my.df))
-                                        return(my.df)
-                                } else{
-                                  my.df <- cbind(t(my.data),colnames(my.data))
-                                  return(my.df)}
-                        } 
+                                return(output.df)
+                        } else if (!is.null(to.remove)){
+                                        #my.df <- my.data[-to.remove]
+                                        #colnames(my.df) <- demo.names[-to.remove]
+                                        output.df <- my.df[-to.remove,]
+                                        return(output.df)
+                        } else {return(my.df)}
                         
                 }
+                
                 #output <- as.matrix(get.pie.chart(college, my_schools[2]))
                 #rownames(output) <- 2
                 output <- get.pie.chart(college,my_schools[2])
