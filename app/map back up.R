@@ -81,20 +81,25 @@ ui = fluidPage(
                                          fluidRow(
                                            wellPanel(
                                              fluidRow(selectInput("Focus","Area of Focus",choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate")),
-                                             fluidRow(radioButtons("opt","Map options",choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE))
+                                             fluidRow(radioButtons("opt","Map options",choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE)),
+                                             fluidRow(radioButtons("output","Cluster by Options",choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE))
                                            )),
                                          actionButton("search", "Start Searching!")
                                     ),
                                #Our Panel for the cluster graph
-                               absolutePanel(id = "control", class = "panel panel-default", fixed = TRUE,
-                                             draggable = TRUE, top = 60, right = 20, bottom = "auto",
-                                             width = 400, height = "auto", cursor = "move",
-                                             fluidPage( 
-                                               uiOutput("map_1"),
-                                               fluidRow(column(width = 5,radioButtons("output","",choices=c("Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time")),selected = "Degree",inline=TRUE))
-                                               )
+                               #uiOutput("map_1"),
+                            absolutePanel(id = "control", class = "panel panel-default", fixed = TRUE,
+                                             draggable = TRUE, top = 60, right = -30, bottom = "auto",
+                                             width = 470, height = 400, cursor = "move",
+                                              
+                                          leafletOutput('myMap_1', width = "95%", height = 450)   
+                                          #uiOutput("map_1"),
+                                          #hr(),
+                                          #fluidRow(column(width = 5,radioButtons("output","",choices=c("Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time")),selected = "Degree",inline=TRUE))
+                                          )
 
-                                             )
+                                             
+                       
                        )),
                       tabPanel("Comparision!",
                        fluidRow(
@@ -271,15 +276,7 @@ server = function(input, output){
  
   
   output$myMap = renderLeaflet({
-    leaflet()%>%
-      setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
-      addProviderTiles("Esri.WorldStreetMap")%>%
-      addMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = paste0(school.selection()$INSTNM,
-                                                                                                       "<br><strong>Average Score of SAT Reading: </strong>",
-                                                                                                       "<mark>",school.selection()$SATVRMID,"</mark>",
-                                                                                                       "<br><strong>Average Score of SAT Math: </strong>",
-                                                                                                       school.selection()$SATMTMID), icon=list(iconUrl='https://cdn0.iconfinder.com/data/icons/back-to-school/90/school-learn-study-hat-graduate_2-512.png',iconSize=c(25,25)))%>%
-      addProviderTiles("Esri.WorldImagery",options = providerTileOptions(opacity = mapping.opt()$O))
+    leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("Esri.WorldStreetMap")%>%addMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = paste0(school.selection()$INSTNM,"<br><strong>Average Score of SAT Reading: </strong>","<mark>",school.selection()$SATVRMID,"</mark>","<br><strong>Average Score of SAT Math: </strong>",school.selection()$SATMTMID), icon=list(iconUrl='https://cdn0.iconfinder.com/data/icons/back-to-school/90/school-learn-study-hat-graduate_2-512.png',iconSize=c(25,25)))%>%addProviderTiles("Esri.WorldImagery",options = providerTileOptions(opacity = mapping.opt()$O))
                          
     })
   
@@ -289,15 +286,15 @@ server = function(input, output){
       list(info=school.selection()[,c("LONGITUDE","LATITUDE","HIGHDEG_1")], color = c("blue","green", "yellow", "orange", "red"))
       
     }
-    else if(input$output == "Two Year vs Four Year")
+    else if(input$output == "Length")
     {
       list(info=school.selection()[,c("LONGITUDE","LATITUDE","twoorfour")],color = c("yellow","red"))
     }
-    else if(input$output == "Transfer rate")
+    else if(input$output == "Transfer Rate")
     {
       list(info=school.selection()[,c("LONGITUDE","LATITUDE","loworhigh")],color = c("yellow","red"))
     }
-    else if(input$output == "Full vs Part Time")
+    else if(input$output == "Type")
     {
       list(info=school.selection()[,c("LONGITUDE","LATITUDE","partorfull")],color = c("yellow","red"))
     }
@@ -306,18 +303,18 @@ server = function(input, output){
   
   
   
-  output$map_1=renderUI({
-    leafletOutput('myMap_1', width = "100%", height = 500)
-  })
+  #output$map_1=renderUI({
+   # leafletOutput('myMap_1', width = "140%", height = 500)
+  #})
  
 
   output$myMap_1 = renderLeaflet({
     leaflet()%>%
       setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
-      addProviderTiles("HERE.basicMap")%>%
+      addProviderTiles("Esri.WorldStreetMap")%>%
       addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%
       addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)
-
+      #"Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time"
   })
   
   
