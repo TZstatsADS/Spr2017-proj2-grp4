@@ -16,38 +16,41 @@ major.frame = data.frame(major = major, index = major.index)
 
 shinyApp(
 ui = fluidPage(
-  navbarPage("Our App's Name",
-              tabPanel("Locate Your School!",
-                       div(class="outer",
+  navbarPage(tags$strong("Our App's Name"),
+              tabPanel(tags$i("Locate Your School!"),
+                       uiOutput("map"),
+                       bootstrapPage(
+                         div(class="outer",
                            
                            tags$head(
                              # Include our custom CSS
                              includeCSS("styles.css")
                                                    ),
-                           uiOutput("map"),
+                          
                            #Our Search Panel
+                           
                            absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                                          draggable = TRUE, top = 60, left = 20, bottom = "auto",
                                          width = 480, height = "auto", cursor = "move",
                                          fluidRow(wellPanel(
-                                           fluidRow(column(10,selectInput("major","Your Major",choices = c("None",major),selected = "None"))),
-                                           fluidRow(column(3,numericInput("sat.reading","SAT Read",value=0,min=0,max=800)),
-                                                    column(3,numericInput("sat.math","SAT Math",value=0,min=0,max=800),offset = 1),
-                                                    column(3,numericInput("sat.writing","SAT Write",value=0,min=20,max=800),offset = 1)),
-                                           fluidRow(column(10,numericInput("score.act","ACT Cumulative Scores",value=0,min=0,max=36))))),
+                                           fluidRow(column(10,selectInput("major",tags$strong("Your Major"),choices = c("I don't konw...",major),selected = "I don't konw..."))),
+                                           fluidRow(column(3,numericInput("sat.reading",tags$strong("SAT Read"),value=800,min=0,max=800,step=10)),
+                                                    column(3,numericInput("sat.math",tags$strong("SAT Math"),value=800,min=0,max=800,step=10),offset = 0),
+                                                    column(3,numericInput("sat.writing",tags$strong("SAT Write"),value=800,min=20,max=800,step=10),offset = 0)),
+                                           fluidRow(column(3,numericInput("score.act",tags$strong("ACT"),value=36,min=0,max=36,step=1)),column(7,radioButtons("score.opt","I want to ignore...",choices = c("SAT","ACT","Both"),selected="Both",inline = TRUE))))),
                                          fluidRow(
                                            wellPanel(
                                              fluidRow(
-                                               column(width = 5,numericInput("max","Maximum Tution",min = 0, max = 999999, value = 0)),
-                                               column(width = 5, offset = 1,radioButtons("location","State Resident?",choices = c("Yes", "No"),selected = "Yes", inline = TRUE))
+                                               column(width = 4,numericInput("max",tags$strong("Maximum Tution"),min = 0, max = 999999, value = 999999)),
+                                               column(width = 5, offset = 1,radioButtons("location",tags$strong("Tuition Options"),choices = list("State Resident", "Non-State Resident","Ignore Tuition"),selected = "Ignore Tuition", inline = FALSE))
                                              ))),
                                          fluidRow(
                                            wellPanel(
-                                             fluidRow(selectInput("Focus","Area of Focus",choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate")),
-                                             fluidRow(radioButtons("opt","Map options",choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE)),
-                                             fluidRow(radioButtons("output","Cluster by Options",choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE))
+                                             fluidRow(selectInput("Focus",tags$strong("Area of Focus"),choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate")),
+                                             fluidRow(radioButtons("opt",tags$strong("Map options"),choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE)),
+                                             fluidRow(radioButtons("output",tags$strong("Cluster by Options"),choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE))
                                            )),
-                                         actionButton("search", "Start Searching!")
+                                         actionButton("search", tags$strong("Start Searching!"))
                                     ),
                                #Our Panel for the cluster graph
                                #uiOutput("map_1"),
@@ -66,18 +69,20 @@ ui = fluidPage(
 
                                              
                        
-                       )),
-                      tabPanel("Comparision!"
+                       )
+                       )#Bootstrap Page ends here
+                       ),#First tab panel ends here
+                      tabPanel(tags$i("Comparision!")
                       ###########################################TEAM 2 IMPLEMENTATION STARTS##########################################################
                       
                       ############################################TEAM 2 IMPLEMENTATION ENDS############################################################
                        ),
-              tabPanel("Data Exploror",
+              tabPanel(tags$i("Data Exploror"),
                        fluidPage(
                        tabsetPanel(
-                       tabPanel("Filtering Data Set",
+                       tabPanel(tags$strong("Filtering Data Set"),
                                  dataTableOutput("mytable_1")),
-                       tabPanel("General Data Set",
+                       tabPanel(tags$strong("General Data Set"),
                                  dataTableOutput("mytable_2"))
                        
                                 )
@@ -85,7 +90,7 @@ ui = fluidPage(
                        )
                        
                        ),
-              tabPanel("About us",
+              tabPanel(tags$i("About us"),
                       textOutput("test.6")
                       )
             )
@@ -167,69 +172,118 @@ server = function(input, output){
     mean(college.filtered[,major.data.index()])
   })
   
-  major.data.frame.upper = reactive({
-    summary(college.filtered[,major.data.index()])[5]
-  })
-  
   school.selection = eventReactive(input$search,{
     
+    if(input$major == "I don't konw...")
+    {
+      if(input$score.opt == "SAT")
+      {
+        if(input$location == "State Resident")
+        {
+          college.filtered %>% filter((ACTCMMID <= input$score.act) & TUITIONFEE_IN <= input$max)
+        }
+        else if(input$location == "Non-State Resident")
+        {
+          college.filtered %>% filter((ACTCMMID <= input$score.act) & TUITIONFEE_OUT <= input$max)
+          
+        }
+        else if(input$location == "Ignore Tuition")
+        {
+          college.filtered %>% filter((ACTCMMID <= input$score.act))
+          
+        }
+      }
+      else if(input$score.opt == "ACT")
+      {
+        if(input$location == "State Resident")
+        {
+          college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)) & TUITIONFEE_IN <= input$max)
+        }
+        else if(input$location == "Non-State Resident")
+        {
+          college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)) & TUITIONFEE_OUT <= input$max)
+        }
+        else if(input$location == "Ignore Tuition")
+        {
+          college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)))
+          
+        }
+        
+      }
+      else if(input$score.opt == "Both")
+      {
+        if(input$location == "State Resident")
+        {
+          college.filtered %>% filter(TUITIONFEE_IN <= input$max)
+          
+        }
+        else if(input$location == "Non-State Resident")
+        {
+          college.filtered %>% filter(TUITIONFEE_OUT <= input$max)
+          
+        }
+        else if(input$location == "Ignore Tuition")
+        {
+          college.filtered %>% filter()
+        }
+      }
+    }
+   else if(input$major != "I don't konw...")
+    {
+      if(input$score.opt == "SAT")
+      {
+        if(input$location == "State Resident")
+        {
+          college.filtered %>% filter((ACTCMMID <= input$score.act) & TUITIONFEE_IN <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
+        }
+        else if(input$location == "Non-State Resident")
+        {
+          college.filtered %>% filter((ACTCMMID <= input$score.act) & TUITIONFEE_OUT <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
+          
+        }
+        else if(input$location == "Ignore Tuition")
+        {
+          college.filtered %>% filter((ACTCMMID <= input$score.act) & college.filtered[,major.data.index()] > major.data.frame.mean())
+          
+        }
+      }
+      else if(input$score.opt == "ACT")
+      {
+        if(input$location == "State Resident")
+        {
+          college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)) & TUITIONFEE_IN <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
+        }
+        else if(input$location == "Non-State Resident")
+        {
+          college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)) & TUITIONFEE_OUT <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
+        }
+        else if(input$location == "Ignore Tuition")
+        {
+          college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))  & college.filtered[,major.data.index()] > major.data.frame.mean())
+          
+        }
+      }
+      else if(input$score.opt == "Both")
+      {
+        if(input$location == "State Resident")
+        {
+          college.filtered %>% filter(TUITIONFEE_IN <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
+          
+        }
+        else if(input$location == "Non-State Resident")
+        {
+          college.filtered %>% filter(TUITIONFEE_OUT <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
+          
+        }
+        else if(input$location == "Ignore Tuition")
+        {
+          college.filtered %>% filter(college.filtered[,major.data.index()] > major.data.frame.mean())
+          
+        }
+      }
+    }
     
-    if(input$major != "None" & ((input$sat.reading == 0 & input$sat.writing == 0 & input$sat.math == 0)|(input$score.act == 0))  & input$max == 0)
-    {
-      college.filtered %>% filter(college.filtered[,major.data.index()] >= major.data.frame.mean())
-    }
-    else if(input$major == "None" & ((input$sat.reading != 0 & input$sat.writing != 0 & input$sat.math != 0)|(input$score.act != 0))  & input$max == 0)
-    {
-      college.filtered %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))))
-    }
-    else if(input$major == "None" & ((input$sat.reading == 0 & input$sat.writing == 0 & input$sat.math == 0)|(input$score.act == 0))  & input$max != 0)
-    {
-      if(input$location == "Yes")
-      {
-        college.filtered %>% filter(TUITIONFEE_IN <= input$max)
-      }
-      else if(input$location == "No")
-      {
-        college.filtered %>% filter(TUITIONFEE_OUT <= input$max)
-      }
-    }
-    else if(input$major != "None" & ((input$sat.reading != 0 & input$sat.writing != 0 & input$sat.math != 0)|(input$score.act != 0))  & input$max != 0)
-    {
-      if(input$location == "Yes")
-      {
-        college.filtered %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))) & TUITIONFEE_IN <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
-      }
-      else if(input$location == "No")
-      {
-        college.filtered %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))) & TUITIONFEE_OUT <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
-      }
-    }
-    else if(input$major != "None" & ((input$sat.reading != 0 & input$sat.writing != 0 & input$sat.math != 0)|(input$score.act != 0))  & input$max == 0)
-    {
-      college.filtered %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)))  & college.filtered[,major.data.index()] > major.data.frame.mean())
-    }
-    else if(input$major != "None" & ((input$sat.reading == 0 & input$sat.writing == 0 & input$sat.math == 0)|(input$score.act == 0))  & input$max != 0)
-    {
-      if(input$location == "Yes")
-      {
-        college.filtered %>% filter(TUITIONFEE_IN <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
-      }
-      else if(input$location == "No")
-      {
-        college.filtered %>% filter(TUITIONFEE_OUT <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
-      }
-    }
-    else if(input$major == "None" & ((input$sat.reading != 0 & input$sat.writing != 0 & input$sat.math != 0)|(input$score.act != 0))  & input$max != 0)
-    {
-      if(input$location == "Yes")
-      {
-        college.filtered %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))) & TUITIONFEE_IN <= input$max)
-      }
-      else if(input$location == "No")
-      {
-        college.filtered %>% filter((ACTCMMID <= input$score.act | ((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))) & TUITIONFEE_OUT <= input$max)
-      }
-    }
+   
   })
   
   output$map=renderUI({
@@ -238,7 +292,11 @@ server = function(input, output){
  
   
   output$myMap = renderLeaflet({
-    leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("Esri.WorldStreetMap")%>%addMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = paste0(school.selection()$INSTNM), icon=list(iconUrl='https://cdn0.iconfinder.com/data/icons/back-to-school/90/school-learn-study-hat-graduate_2-512.png',iconSize=c(25,25)))%>%addProviderTiles("Esri.WorldImagery",options = providerTileOptions(opacity = mapping.opt()$O))
+    leaflet()%>%
+      setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
+      addProviderTiles("Esri.WorldStreetMap")%>%
+      addMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = paste(school.selection()$INSTNM,school.selection()$INSTURL), icon=list(iconUrl='https://cdn0.iconfinder.com/data/icons/back-to-school/90/school-learn-study-hat-graduate_2-512.png',iconSize=c(25,25)))%>%
+      addProviderTiles("Esri.WorldImagery",options = providerTileOptions(opacity = mapping.opt()$O))
       #"<br><strong>Average Score of SAT Reading: </strong>","<mark>",school.selection()$SATVRMID
       #"</mark>","<br><strong>Average Score of SAT Math: </strong>",school.selection()$SATMTMID
     })
