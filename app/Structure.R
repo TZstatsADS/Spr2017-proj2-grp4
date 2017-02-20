@@ -71,7 +71,7 @@ ui = fluidPage(
                            #Our Search Panel
                            absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                                          draggable = TRUE, top = 60, left = 20, bottom = "auto",
-                                         width = 410, height = "auto", cursor = "move",
+                                         width = 500, height = "auto", cursor = "move",
                                          fluidRow(wellPanel(
                                            fluidRow(column(10,selectInput("major","Your Major",choices = c("None",major),selected = "None"))),
                                            fluidRow(column(3,numericInput("sat.reading","SAT Read",value=0,min=0,max=800)),
@@ -94,7 +94,7 @@ ui = fluidPage(
                                #Our Panel for the cluster graph
                                absolutePanel(id = "control", class = "panel panel-default", fixed = TRUE,
                                              draggable = TRUE, top = 60, right = 20, bottom = "auto",
-                                             width = 500, height = "auto", cursor = "move",
+                                             width = 400, height = "auto", cursor = "move",
                                              fluidPage( 
                                                uiOutput("map_1"),
                                                fluidRow(column(width = 5,radioButtons("output","",choices=c("Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time")),selected = "Degree",inline=TRUE))
@@ -291,7 +291,6 @@ ui = fluidPage(
                                
                                
                        ),
-              tabPanel("Historical Data Overview"),
               tabPanel("Data Reference",
                        absolutePanel(top = 20,
                                      left = 20,
