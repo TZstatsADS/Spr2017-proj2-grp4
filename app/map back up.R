@@ -75,7 +75,7 @@ ui = fluidPage(
                                          fluidRow(
                                            wellPanel(
                                              fluidRow(
-                                               column(width = 5,numericInput("max","Maximum Tution",min = 0, max = 51010, value = 0)),
+                                               column(width = 5,numericInput("max","Maximum Tution",min = 0, max = 999999, value = 999999)),
                                                column(width = 5, offset = 1,radioButtons("location","State Resident?",choices = c("Yes", "No"),selected = "Yes", inline = TRUE))
                                              ))),
                                          fluidRow(
@@ -88,15 +88,18 @@ ui = fluidPage(
                                     ),
                                #Our Panel for the cluster graph
                                #uiOutput("map_1"),
-                            absolutePanel(id = "control", class = "panel panel-default", fixed = TRUE,
+                            absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                                              draggable = TRUE, top = 60, right = -30, bottom = "auto",
                                              width = 470, height = 400, cursor = "move",
                                               
                                           leafletOutput('myMap_1', width = "95%", height = 450)   
-                                          #uiOutput("map_1"),
-                                          #hr(),
-                                          #fluidRow(column(width = 5,radioButtons("output","",choices=c("Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time")),selected = "Degree",inline=TRUE))
-                                          )
+                                          ),
+                           absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
+                                         draggable = TRUE, top = 500, right = -30, bottom = "auto",
+                                         width = 470, height = 400, cursor = "move"
+                                         
+                                         #$leafletOutput('myMap_1', width = "95%", height = 450)   
+                           )
 
                                              
                        
@@ -303,18 +306,14 @@ server = function(input, output){
   
   
   
-  #output$map_1=renderUI({
-   # leafletOutput('myMap_1', width = "140%", height = 500)
-  #})
- 
+
 
   output$myMap_1 = renderLeaflet({
     leaflet()%>%
       setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
-      addProviderTiles("Esri.WorldStreetMap")%>%
+      addProviderTiles("NASAGIBS.ViirsEarthAtNight2012")%>%
       addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%
       addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)
-      #"Degree","Two Year vs Four Year","Transfer rate","Full vs Part Time"
   })
   
   
