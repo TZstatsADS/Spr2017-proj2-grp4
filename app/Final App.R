@@ -2,7 +2,6 @@ library(shiny)
 library(ggmap)
 library(leaflet)
 library(dplyr)
-library(shinyBS)
 
 
 #college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
