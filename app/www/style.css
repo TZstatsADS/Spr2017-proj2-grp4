@@ -89,8 +89,8 @@ div.footer {
     top: auto;
     left: auto;
     right: 20px;
-    bottom: 20px;
+    bottom: 50px;
     font-style: bold;
     text-align: right;
-    color: black;
+    color: red;
 }
