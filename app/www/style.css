@@ -5,7 +5,7 @@ body {
 /* Page background */
 #canvas {
     position: fixed;
-    background-image: url("img/p4.jpg");
+    background-image: url("img/p5.jpg");
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
@@ -89,7 +89,7 @@ div.footer {
     top: auto;
     left: auto;
     right: 20px;
-    bottom: 50px;
+    bottom: 1px;
     font-style: bold;
     text-align: right;
     color: red;

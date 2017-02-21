@@ -17,9 +17,9 @@ shinyApp(
 ui =  div(id="canvas",
           
           navbarPage(strong("Our App's name",style="color: blue;"), theme="style.css",
-                     
+                     div(class="outer",
                      tabPanel(strong(tags$i("Map")),
-                              div(class="outer",
+                             
                                   # lealfet map
                                   uiOutput("map"),
                                   
@@ -62,10 +62,10 @@ ui =  div(id="canvas",
                                                 
                                      #           leafletOutput("myMap_2",width="95%",height=450)
                                   #)                                 
-                              )
+                              #)
                      #,div(class="footer", "Applied Data Science Group 4")
+                     )
                      ),
-                     
                     #Comparison 
                     tabPanel(strong(tags$i("Comparision!"))
                              ###########################################TEAM 2 IMPLEMENTATION STARTS##########################################################
