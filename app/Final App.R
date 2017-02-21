@@ -67,12 +67,13 @@ ui =  div(id="canvas",
                      ,div(class="footer", "Applied Data Science Group 4")
                      ),
                      
-                     # 4.DATA TAB
+                    #Comparison 
                     tabPanel(strong(tags$i("Comparision!"))
                              ###########################################TEAM 2 IMPLEMENTATION STARTS##########################################################
                              
                              ############################################TEAM 2 IMPLEMENTATION ENDS############################################################
-                    ),
+                    ),#Comparison ends here
+                    #Data presentation
                     tabPanel(strong(tags$i("Data Exploror")),
                              fluidPage(
                                tabsetPanel(
@@ -83,12 +84,14 @@ ui =  div(id="canvas",
                                  
                                )
                                
-                             )
+                             ),div(class="footer", "Applied Data Science Group 4")
                              
-                    ),
+                    ),#data presentation ends here
+                    #Introduction
                     tabPanel(strong(tags$i("About us")),
                              textOutput("test.6")
-                    )
+                             ,div(class="footer", "Applied Data Science Group 4")
+                             )#Introduciton ends here
                      
                      
           )#navarbarPage ends here
