@@ -2,6 +2,7 @@ library(shiny)
 library(ggmap)
 library(leaflet)
 library(dplyr)
+library(shinyBS)
 #Current Problems:
 #Multople Criteria Searcing failure.
 
@@ -26,8 +27,8 @@ ui =  div(id="canvas",
                                   
                                   # control panel
                                   absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
-                                                draggable = TRUE, top = 60, left = 20, bottom = "auto",
-                                                width = 480, height = "auto", cursor = "move",
+                                                draggable = TRUE, top = 60, left = 10, bottom = "auto",
+                                                width = 500, height = "auto", cursor = "move",
                                                 fluidRow(wellPanel(
                                                   fluidRow(column(10,selectInput("major",tags$strong("Your Major"),choices = c("I don't konw...",major),selected = "I don't konw..."))),
                                                   fluidRow(column(3,numericInput("sat.reading",tags$strong("SAT Read"),value=800,min=0,max=800,step=10)),
@@ -37,14 +38,14 @@ ui =  div(id="canvas",
                                                 fluidRow(
                                                   wellPanel(
                                                     fluidRow(
-                                                      column(width = 4,numericInput("max",tags$strong("Maximum Tution"),min = 0, max = 999999, value = 999999)),
-                                                      column(width = 5, offset = 1,radioButtons("location",tags$strong("Tuition Options"),choices = list("State Resident", "Non-State Resident","Ignore Tuition"),selected = "Ignore Tuition", inline = FALSE))
+                                                      column(width = 3,numericInput("max",tags$strong("Max Tution"),min = 0, max = 999999, value = 999999)),
+                                                      column(width = 8, offset = 1,radioButtons("location",tags$strong("Tuition Options"),choices = list("State Resident", "Non-State Resident","Ignore Tuition"),selected = "Ignore Tuition", inline = FALSE))
                                                     ))),
                                                 fluidRow(
                                                   wellPanel(
-                                                    fluidRow(selectInput("Focus",tags$strong("Area of Focus"),choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate")),
-                                                    fluidRow(radioButtons("opt",tags$strong("Map options"),choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE)),
-                                                    fluidRow(radioButtons("output",tags$strong("Cluster by Options"),choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE))
+                                                    fluidRow(column(4,selectInput("Focus",tags$strong("Area of Focus"),choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate")),
+                                                             column(6,radioButtons("opt",tags$strong("Map types"),choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE))),
+                                                    fluidRow(column(10,radioButtons("output",tags$strong("Cluster by Options"),choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE)))
                                                   )),
                                                 actionButton("search", tags$strong("Start Searching!"))
                                   ),
@@ -55,16 +56,16 @@ ui =  div(id="canvas",
                                                 width = 470, height = 400, cursor = "move",
                                                 
                                                 leafletOutput('myMap_1', width = "95%", height = 450)   
-                                  ),
+                                  )
                                  
-                                  absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
-                                                draggable = TRUE, top = 500, right = -30, bottom = "auto",
-                                                width = 470, height = 400, cursor = "move",
+                                  #absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
+                                   #             draggable = TRUE, top = 500, right = -30, bottom = "auto",
+                                    #            width = 470, height = 400, cursor = "move",
                                                 
-                                                leafletOutput("myMap_2",width="95%",height=450)
-                                  )                                 
+                                     #           leafletOutput("myMap_2",width="95%",height=450)
+                                  #)                                 
                               )
-                     ,div(class="footer", "Applied Data Science Group 4")
+                     #,div(class="footer", "Applied Data Science Group 4")
                      ),
                      
                     #Comparison 
