@@ -211,9 +211,9 @@ ui = fluidPage(
                                # === display percentage of federal loans
                                
                                fluidRow(align="center",splitLayout(cellWidths = c("50%","50%"), 
-                                                                   fluidRow(strong(column(width=6,offset=1,"Percentage of Students Receiving Federal Loans: ")),
+                                                                   fluidRow(strong(column(width=7,offset=1,"Percentage of Students Receiving Federal Loans: ")),
                                                                             textOutput("pctfloan1")),
-                                                                   fluidRow(strong(column(width=6,offset=1,"Percentage of Students Receiving Federal Loans: ")),
+                                                                   fluidRow(strong(column(width=7,offset=1,"Percentage of Students Receiving Federal Loans: ")),
                                                                             textOutput("pctfloan2")))
                                ),br(),
                                # === display total Undergraduates Seeking Degrees
