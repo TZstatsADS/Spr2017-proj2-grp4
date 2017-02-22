@@ -15,7 +15,7 @@ major.frame = data.frame(major = major, index = major.index)
 shinyApp(
 ui =  div(id="canvas",
           
-          navbarPage(strong("Our App's name",style="color: blue;"), theme="style.css",
+          navbarPage(strong("Our App's name",style="color: white;"), theme="style.css",
                      
                      tabPanel(strong(tags$i("Map")),
                               div(class="outer",  
