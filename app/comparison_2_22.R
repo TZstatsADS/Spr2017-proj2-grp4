@@ -111,9 +111,9 @@ ui <- fluidPage(tags$hr(style="border-color: #6088B1;"),
                 # === display percentage of federal loans
                 
                 fluidRow(align="center",splitLayout(cellWidths = c("50%","50%"), 
-                                                    fluidRow(strong(column(width=6,offset=1,"Percentage of Students Receiving Federal Loans: ")),
+                                                    fluidRow(strong(column(width=7,offset=1,"Percentage of Students Receiving Federal Loans: ")),
                                                              textOutput("pctfloan1")),
-                                                    fluidRow(strong(column(width=6,offset=1,"Percentage of Students Receiving Federal Loans: ")),
+                                                    fluidRow(strong(column(width=7,offset=1,"Percentage of Students Receiving Federal Loans: ")),
                                                              textOutput("pctfloan2")))
                 ),br(),
                 # === display total Undergraduates Seeking Degrees
@@ -154,6 +154,7 @@ ui <- fluidPage(tags$hr(style="border-color: #6088B1;"),
                          column(6,offset=3,
                                 br(),hr(style="color:#808080"),
                                 helpText( strong("SAT & ACT Scores" , style="color:#6088B1 ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
+                                helpText( strong("25th-75th Percentile" , style="color:#6088B1 ; font-family: 'times'; font-size:20pt ; font-type:bold" )),
                                 hr(style="color:#808080")
                          )),
                 br(),
@@ -196,8 +197,8 @@ ui <- fluidPage(tags$hr(style="border-color: #6088B1;"),
                                                tags$hr(style="border-color: #6088B1;")),br()),
                 fluidRow(align="center",
                          splitLayout(cellWidths = c("50%","50%"),
-                                     plotlyOutput("demographics1",height="760"),
-                                     plotlyOutput("demographics2",height="760"))
+                                     plotlyOutput("demographics1",height="550"),
+                                     plotlyOutput("demographics2",height="550"))
                          
                 ),br(),
                 fluidRow(align="center",column(8,h2("Degree-Seeking Undergraduates by Gender",
@@ -205,8 +206,8 @@ ui <- fluidPage(tags$hr(style="border-color: #6088B1;"),
                                                tags$hr(style="border-color: #6088B1;")),br()),
                 fluidRow(align="center",
                          splitLayout(cellWidths = c("50%","50%"),
-                                     plotlyOutput("female1",height="630"),
-                                     plotlyOutput("female2",height="630")
+                                     plotlyOutput("female1",height="450"),
+                                     plotlyOutput("female2",height="450")
                                      
                          ))
                 
@@ -622,11 +623,17 @@ server <- function(input, output) {
                 renderPlotly(
                         plot_ly(MY_ethnicity_data1(), labels = MY_ethnicity_data1()[,2],
                                 values = MY_ethnicity_data1()[,1], 
-                                type = 'pie',marker = list(colors = MY_ethnicity_data1()[,3]))%>%
+                                type = 'pie',marker = list(colors = MY_ethnicity_data1()[,3],
+                                                           line = list(color = '#FFFFFF', width = 1)),
+                                width = 500, height = 500, textposition = 'inside+outside',
+                                textinfo = 'label',
+                                insidetextfont = list(color = '#FFFFFF'), showlegend=F )
+                        %>%
                                 layout(title = paste("Ethnicity diversity of <br>", my_schools()[1],"<br>"),
                                        xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                        yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                                       legend=list(orientation='h'))
+                                       legend=list(orientation='h'), 
+                                       margin = list(l = 100,r = 100,b = 20,t = 100,pad = 5))
                                       
                         
                 )
@@ -682,11 +689,17 @@ server <- function(input, output) {
                 renderPlotly(
                         plot_ly(MY_ethnicity_data2(), labels = MY_ethnicity_data2()[,2],
                                 values = MY_ethnicity_data2()[,1], 
-                                type = 'pie',marker = list(colors = MY_ethnicity_data2()[,3]))%>%
+                                type = 'pie',marker = list(colors = MY_ethnicity_data2()[,3],
+                                                           line = list(color = '#FFFFFF', width = 1)),
+                                width = 500, height = 500, textposition = 'inside+outside',
+                                textinfo = 'label',
+                                insidetextfont = list(color = '#FFFFFF'), showlegend=F )
+                        %>%
                                 layout(title = paste("Ethnicity diversity of <br>", my_schools()[2],"<br>"),
                                        xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                        yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                                       legend=list(orientation='h'))
+                                       legend=list(orientation='h'),
+                                       margin = list(l = 100,r = 100,b = 20,t = 100,pad = 5))
                         
                 )
         
@@ -717,11 +730,18 @@ server <- function(input, output) {
         })
         output$female1 <- renderPlotly(
                 plot_ly(MY_female_data1(), labels = ~MY_female_data1()[,2], values = ~MY_female_data1()[,1], type = 'pie',
-                        marker = list(colors = MY_female_data1()[,3])) %>%
+                        marker = list(colors = MY_female_data1()[,3], 
+                                      line = list(color = '#FFFFFF', width = 1)), 
+                        width = 400, height = 400, textposition = 'inside+outside',
+                        textinfo = 'label',
+                        insidetextfont = list(color = '#FFFFFF'), showlegend=F
+                        ) 
+                %>%
                         layout(title = paste("Gender diversity of <br>", my_schools()[1]),
                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                               legend=list(orientation='h'))
+                               legend=list(orientation='h'),
+                               margin = list(l = 50,r = 50,b = 100,t = 100,pad = 4))
         )
         MY_female_data2=reactive({
                 
@@ -752,11 +772,17 @@ server <- function(input, output) {
         })
         output$female2 <- renderPlotly(
                 plot_ly(MY_female_data2(), labels = MY_female_data2()[,2], values = MY_female_data2()[,1], type = 'pie',
-                        marker = list(colors = MY_female_data2()[,3])) %>%
+                        marker = list(colors = MY_female_data2()[,3], 
+                                      line = list(color = '#FFFFFF', width = 1)), 
+                        width = 400, height = 400, textposition = 'inside+outside',
+                        textinfo = 'label',
+                        insidetextfont = list(color = '#FFFFFF'), showlegend=F) 
+                %>%
                         layout(title = paste("Gender diversity of <br>", my_schools()[2]),
                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                               legend=list(orientation='h'))
+                               legend=list(orientation='h'),
+                               margin = list(l = 50,r = 50,b = 100,t = 100,pad = 4))
         )
         
         debt.data.1 <- reactive({
@@ -873,31 +899,43 @@ server <- function(input, output) {
                 # as.matrix(MY_score_data2())[1:6,],
                 #rownames = c("SAT Verbal 25th","SAT Verbal 75th","SAT Math 25th","SAT Math 75th","SAT Writing 25th","SAT Writing 75th"),
                 #colnames = "Score"
-                stack(data.frame("SAT Verbal 25th"=MY_score_data1()[1], "SAT Verbal 75th"=MY_score_data1()[2],"SAT Math 25th"=MY_score_data1()[3],
-                                 "SAT Math 75th"=MY_score_data1()[4],"SAT Writing 25th"=MY_score_data1()[5],"SAT Writing 75th"=MY_score_data1()[6]))
+                
+                cbind(SAT = c("Verbal" ,"Math", "Writing"),
+                      Score = c(paste(MY_score_data1()[1],"-",MY_score_data1()[2]),
+                                paste(MY_score_data1()[2],"-", MY_score_data1()[4]),
+                                paste(MY_score_data1()[5],"-",MY_score_data1()[6])))
         )
         output$sat2 <- renderTable(
                 #as.matrix(MY_score_data2())[1:6,],
                 #rownames = c("SAT Verbal 25th","SAT Verbal 75th","SAT Math 25th","SAT Math 75th","SAT Writing 25th","SAT Writing 75th"),
                 #colnames = "Score"
-                stack(data.frame("SAT Verbal 25th"=MY_score_data2()[1], "SAT Verbal 75th"=MY_score_data2()[2],"SAT Math 25th"=MY_score_data2()[3],
-                                 "SAT Math 75th"=MY_score_data2()[4],"SAT Writing 25th"=MY_score_data2()[5],"SAT Writing 75th"=MY_score_data2()[6]))
+                
+                cbind(SAT = c("Verbal" ,"Math", "Writing"),
+                      Score = c(paste(MY_score_data2()[1],"-",MY_score_data2()[2]),
+                                paste(MY_score_data2()[2],"-", MY_score_data2()[4]),
+                                paste(MY_score_data2()[5],"-",MY_score_data2()[6])))
         )
         output$act1 <- renderTable(
                 #as.matrix(MY_score_data1())[7:14,],
                 #rownames = c("ACT Cumulative Score 25th","ACT Cumulative Score 75th","ACT English 25th","ACT English 75th","ACT Math 25th","ACT Math 75th","ACT Writing 25th","ACT Writing 75th"),
                 #colnames = "Score"
-                stack(data.frame("ACT Cumulative Score 25th"=MY_score_data1()[7],"ACT Cumulative Score 75th"=MY_score_data1()[8],"ACT English 25th"=MY_score_data1()[9], "ACT English 75th"=MY_score_data1()[10],
-                                 "ACT Math 25th"=MY_score_data1()[11],
-                                 "ACT Math 75th"=MY_score_data1()[12],"ACT Writing 25th"=MY_score_data1()[13],"ACT Writing 75th"=MY_score_data1()[14]))
+                
+                
+                cbind(ACT = c("Cumulative Score" ,"English", "Math","Writing"),
+                      Score = c(paste(MY_score_data1()[7],"-",MY_score_data1()[8]),
+                                paste(MY_score_data1()[9],"-", MY_score_data1()[10]),
+                                paste(MY_score_data1()[11],"-",MY_score_data1()[12]),
+                                paste(MY_score_data1()[13],"-",MY_score_data1()[14])))
         )
         output$act2 <- renderTable(
                 #as.matrix(MY_score_data2())[7:14,],
                 #rownames = c("ACT Cumulative Score 25th","ACT Cumulative Score 75th","ACT English 25th","ACT English 75th","ACT Math 25th","ACT Math 75th","ACT Writing 25th","ACT Writing 75th"),
                 #colnames = "Score",
-                stack(data.frame("ACT Cumulative Score 25th"=MY_score_data2()[7],"ACT Cumulative Score 75th"=MY_score_data2()[8],"ACT English 25th"=MY_score_data2()[9], "ACT English 75th"=MY_score_data2()[10],"ACT Math 25th"=MY_score_data2()[11],
-                                 "ACT Math 75th"=MY_score_data2()[12],"ACT Writing 25th"=MY_score_data2()[13],"ACT Writing 75th"=MY_score_data2()[14]))
-                
+          cbind(ACT = c("Cumulative Score" ,"English", "Math","Writing"),
+                Score = c(paste(MY_score_data2()[7],"-",MY_score_data2()[8]),
+                          paste(MY_score_data2()[9],"-", MY_score_data2()[10]),
+                          paste(MY_score_data2()[11],"-",MY_score_data2()[12]),
+                          paste(MY_score_data2()[13],"-",MY_score_data2()[14])))
         )
 }
 
