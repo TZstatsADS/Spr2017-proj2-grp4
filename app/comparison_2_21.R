@@ -196,8 +196,8 @@ ui <- fluidPage(tags$hr(style="border-color: #6088B1;"),
                                                tags$hr(style="border-color: #6088B1;")),br()),
                 fluidRow(align="center",
                          splitLayout(cellWidths = c("50%","50%"),
-                                     plotlyOutput("demographics1",height="760"),
-                                     plotlyOutput("demographics2",height="760"))
+                                     plotlyOutput("demographics1",height="550"),
+                                     plotlyOutput("demographics2",height="550"))
                          
                 ),br(),
                 fluidRow(align="center",column(8,h2("Degree-Seeking Undergraduates by Gender",
@@ -205,8 +205,8 @@ ui <- fluidPage(tags$hr(style="border-color: #6088B1;"),
                                                tags$hr(style="border-color: #6088B1;")),br()),
                 fluidRow(align="center",
                          splitLayout(cellWidths = c("50%","50%"),
-                                     plotlyOutput("female1",height="630"),
-                                     plotlyOutput("female2",height="630")
+                                     plotlyOutput("female1",height="450"),
+                                     plotlyOutput("female2",height="450")
                                      
                          ))
                 
@@ -619,11 +619,18 @@ server <- function(input, output) {
                 renderPlotly(
                         plot_ly(MY_ethnicity_data1(), labels = MY_ethnicity_data1()[,2],
                                 values = MY_ethnicity_data1()[,1], 
-                                type = 'pie')%>%
+                                width = 500, height = 500,
+                                type = 'pie' , textposition = 'inside+outside',
+                                textinfo = 'label',
+                                insidetextfont = list(color = '#FFFFFF'), showlegend=F ,
+                                marker = list(
+                                              line = list(color = '#FFFFFF', width = 1))) 
+                        %>%
                                 layout(title = paste("Ethnicity diversity of <br>", my_schools()[1],"<br>"),
                                        xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                        yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                                       legend=list(orientation='h'))
+                                       legend=list(orientation='h'), 
+                                       margin = list(l = 100,r = 100,b = 20,t = 100,pad = 5))
                         
                 )
         
@@ -677,11 +684,17 @@ server <- function(input, output) {
                 renderPlotly(
                         plot_ly(MY_ethnicity_data2(), labels = MY_ethnicity_data2()[,2],
                                 values = MY_ethnicity_data2()[,1], 
-                                type = 'pie')%>%
+                                width = 500, height = 500,
+                                type = 'pie' , textposition = 'inside+outside',
+                                textinfo = 'label',
+                                insidetextfont = list(color = '#FFFFFF'), showlegend=F ,
+                                marker = list(
+                                              line = list(color = '#FFFFFF', width = 1)))
+                        %>%
                                 layout(title = paste("Ethnicity diversity of <br>", my_schools()[2],"<br>"),
                                        xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                        yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                                       legend=list(orientation='h'))
+                                       margin = list(l = 100,r = 100,b = 20,t = 100,pad = 5))
                         
                 )
         
@@ -711,11 +724,20 @@ server <- function(input, output) {
                 
         })
         output$female1 <- renderPlotly(
-                plot_ly(MY_female_data1(), labels = ~MY_female_data1()[,2], values = ~MY_female_data1()[,1], type = 'pie') %>%
+                plot_ly(MY_female_data1(), labels = ~MY_female_data1()[,2], values = ~MY_female_data1()[,1], 
+                        width = 400, height = 400,
+                        type = 'pie' ,
+                        marker = list(
+                                      line = list(color = '#FFFFFF', width = 1)),
+                        textposition = 'inside+outside',
+                        textinfo = 'label',
+                        insidetextfont = list(color = '#FFFFFF'), showlegend=F ) 
+                %>%
                         layout(title = paste("Gender diversity of <br>", my_schools()[1]),
                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                               legend=list(orientation='h'))
+                               legend=list(orientation='h'),  
+                               margin = list(l = 50,r = 50,b = 100,t = 100,pad = 4))
         )
         MY_female_data2=reactive({
                 
@@ -745,11 +767,20 @@ server <- function(input, output) {
                 
         })
         output$female2 <- renderPlotly(
-                plot_ly(MY_female_data2(), labels = MY_female_data2()[,2], values = MY_female_data2()[,1], type = 'pie') %>%
+                plot_ly(MY_female_data2(), labels = MY_female_data2()[,2], values = MY_female_data2()[,1], 
+                        width = 400, height = 400,
+                        type = 'pie' ,
+                        marker = list(
+                                      line = list(color = '#FFFFFF', width = 1)),
+                        textposition = 'inside+outside',
+                        textinfo = 'label',
+                        insidetextfont = list(color = '#FFFFFF'), showlegend=F ) 
+                %>%
                         layout(title = paste("Gender diversity of <br>", my_schools()[2]),
                                xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                                yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                               legend=list(orientation='h'))
+                               legend=list(orientation='h'), 
+                               margin = list(l = 50,r = 50,b = 100,t = 100,pad = 4))
         )
         
         debt.data.1 <- reactive({
@@ -888,8 +919,11 @@ server <- function(input, output) {
                 #as.matrix(MY_score_data2())[7:14,],
                 #rownames = c("ACT Cumulative Score 25th","ACT Cumulative Score 75th","ACT English 25th","ACT English 75th","ACT Math 25th","ACT Math 75th","ACT Writing 25th","ACT Writing 75th"),
                 #colnames = "Score",
-                stack(data.frame("ACT Cumulative Score 25th"=MY_score_data2()[7],"ACT Cumulative Score 75th"=MY_score_data2()[8],"ACT English 25th"=MY_score_data2()[9], "ACT English 75th"=MY_score_data2()[10],"ACT Math 25th"=MY_score_data2()[11],
-                                 "ACT Math 75th"=MY_score_data2()[12],"ACT Writing 25th"=MY_score_data2()[13],"ACT Writing 75th"=MY_score_data2()[14]))
+                cbind(ACT = c("Cumulative Score" ,"English", "Math","Writing"),
+                      Score = c(paste(MY_score_data2()[7],"-",MY_score_data2()[8]),
+                                 paste(MY_score_data2()[9],"-", MY_score_data2()[10]),
+                                 paste(MY_score_data2()[11],"-",MY_score_data2()[12]),
+                                 paste(MY_score_data2()[13],"-",MY_score_data2()[14])))
                 
         )
 }
