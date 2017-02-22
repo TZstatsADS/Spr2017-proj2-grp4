@@ -142,10 +142,10 @@ ui <- fluidPage(tags$hr(style="border-color: #6088B1;"),
                 ),br(),
                 # === display median debt based on family income input 
                 fluidRow(align="justify",splitLayout(cellWidths = c("50%","50%"), 
-                                                     fluidRow(strong(column(width=7,offset=1,textOutput("school1"))),
+                                                     fluidRow(column(width=7,offset=1,textOutput("school1")),
                                                                             strong(column(width=7,offset = 1,"Median Debt based on Family Income : ")),br(),
                                                               textOutput("debt1")),
-                                                     fluidRow(strong(column(width=7,offset=1,textOutput("school2"))),
+                                                     fluidRow(column(width=7,offset=1,textOutput("school2")),
                                                               strong(column(width=7,offset=1,"Median Debt based on Family Income: ")),br(),
                                                               textOutput("debt2")))
                 ),
