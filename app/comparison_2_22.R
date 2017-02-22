@@ -142,9 +142,11 @@ ui <- fluidPage(tags$hr(style="border-color: #6088B1;"),
                 ),br(),
                 # === display median debt based on family income input 
                 fluidRow(align="justify",splitLayout(cellWidths = c("50%","50%"), 
-                                                     fluidRow(strong(column(width=7,offset = 1,"Median Debt based on Family Income: ")),
+                                                     fluidRow(strong(column(width=7,offset=1,textOutput("school1"))),
+                                                                            strong(column(width=7,offset = 1,"Median Debt based on Family Income : ")),br(),
                                                               textOutput("debt1")),
-                                                     fluidRow(strong(column(width=7,offset=1,"Median Debt based on Family Income: ")),
+                                                     fluidRow(strong(column(width=7,offset=1,textOutput("school2"))),
+                                                              strong(column(width=7,offset=1,"Median Debt based on Family Income: ")),br(),
                                                               textOutput("debt2")))
                 ),
                 br(),
@@ -158,6 +160,13 @@ ui <- fluidPage(tags$hr(style="border-color: #6088B1;"),
                                 hr(style="color:#808080")
                          )),
                 br(),
+                
+                fluidRow(align="center",splitLayout(cellWidths = c("50%","50%"),
+                                                    textOutput("school1.2"),
+                                                    textOutput("school2.2"))
+                  
+                ),
+                
                 fluidRow(align="center",splitLayout(cellWidths = c("50%","50%"),
                                                     tableOutput("sat1"),
                                                     tableOutput("sat2"))
@@ -937,6 +946,11 @@ server <- function(input, output) {
                           paste(MY_score_data2()[11],"-",MY_score_data2()[12]),
                           paste(MY_score_data2()[13],"-",MY_score_data2()[14])))
         )
+        
+        output$school1 <- renderText(paste("(",my_schools()[1],")"))
+        output$school2 <- renderText(paste("(",my_schools()[2],")"))
+        output$school1.2 <- renderText(paste("(",my_schools()[1],")"))
+        output$school2.2 <- renderText(paste("(",my_schools()[2],")"))
 }
 
 shinyApp(ui,server)
