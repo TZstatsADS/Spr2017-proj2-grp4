@@ -2,12 +2,13 @@ library(shiny)
 library(ggmap)
 library(leaflet)
 library(dplyr)
+library(shinyBS)
 
 
 #college = read.csv("C:/Users/sh355/Documents/GitHub/Spr2017-proj2-grp4/data/school.select.csv", header = TRUE, stringsAsFactors = FALSE)
-
+#setwd("D:/Columbia University/Spring2017-Applied Data Science/Project_2_Bz2290/Spr2017-proj2-grp4/data")
 college.filtered = read.csv("../data/school.select.csv",header = TRUE,stringsAsFactors = FALSE)
-
+college =  read.csv("../data/College2014_15_new.csv",header = TRUE,stringsAsFactors = FALSE)
 major = c("Agriculture, Agriculture Operations, And Related Sciences","Natural Resources And Conservation", "Architecture And Related Services","Area, Ethnic, Cultural, Gender, And Group Studies"," Communication, Journalism, And Related Programs","Communications Technologies/Technicians And Support Services","Computer And Information Sciences And Support Services","Personal And Culinary Services"," Education","Engineering","Engineering Technologies And Engineering-Related Fields","Foreign Languages, Literatures, And Linguistics"," Family And Consumer Sciences/Human Sciences","Legal Professions And Studies","English Language And Literature/Letters","Liberal Arts And Sciences, General Studies And Humanities","Library Science"," Biological And Biomedical Sciences","Mathematics And Statistics","Military Technologies And Applied Sciences","Multi/Interdisciplinary Studies","Parks, Recreation, Leisure, And Fitness Studies","Philosophy And Religious Studies","Theology And Religious Vocations"," Physical Sciences"," Science Technologies/Technicians"," Psychology"," Homeland Security, Law Enforcement, Firefighting And Related Protective Services","Public Administration And Social Service Professions","Social Sciences","Construction Trades","Mechanic And Repair Technologies/Technicians","Precision Production","Transportation And Materials Moving","Visual And Performing Arts","Health Professions And Related Programs","Business, Management, Marketing, And Related Support Services","History")
 major.index =c("PCIP01","PCIP03","PCIP04","PCIP05","PCIP09","PCIP10","PCIP11","PCIP12","PCIP13","PCIP14","PCIP15","PCIP16","PCIP19","PCIP22","PCIP23","PCIP24","PCIP25","PCIP26","PCIP27","PCIP29","PCIP30","PCIP31","PCIP38","PCIP39","PCIP40","PCIP41","PCIP42","PCIP43","PCIP44","PCIP45","PCIP46","PCIP47","PCIP48","PCIP49","PCIP50","PCIP51","PCIP52","PCIP54")
 major.frame = data.frame(major = major, index = major.index)
@@ -26,24 +27,36 @@ ui =  div(id="canvas",
                                   absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                                                 draggable = TRUE, top = 60, left = 10, bottom = "auto",
                                                 width = 500, height = "auto", cursor = "move",
-                                                fluidRow(wellPanel(
-                                                  fluidRow(column(10,selectInput("major",tags$strong("Your Major"),choices = c("I don't konw...",major),selected = "I don't konw..."))),
+                                                bsCollapsePanel(tags$strong("Choose Your Major!"),style="primary",
+                                                  fluidRow(column(10,selectInput("major",tags$strong("Your Major"),choices = c("I don't konw...",major),selected = "I don't konw..."))
+                                                           )
+                                                  ),
+                                                bsCollapsePanel(tags$strong("Update Your SAT Score!"),style="primary",
                                                   fluidRow(column(3,numericInput("sat.reading",tags$strong("SAT Read"),value=800,min=0,max=800,step=10)),
                                                            column(3,numericInput("sat.math",tags$strong("SAT Math"),value=800,min=0,max=800,step=10),offset = 0),
-                                                           column(3,numericInput("sat.writing",tags$strong("SAT Write"),value=800,min=20,max=800,step=10),offset = 0)),
-                                                  fluidRow(column(3,numericInput("score.act",tags$strong("ACT"),value=36,min=0,max=36,step=1)),column(7,radioButtons("score.opt","I want to ignore...",choices = c("SAT","ACT","Both"),selected="Both",inline = TRUE))))),
-                                                fluidRow(
-                                                  wellPanel(
+                                                           column(3,numericInput("sat.writing",tags$strong("SAT Write"),value=800,min=20,max=800,step=10),offset = 0)
+                                                           )
+                                                ),
+                                                
+                                                bsCollapsePanel(tags$strong("Update Your ACT Score!"),style="primary",  
+                                                fluidRow(column(3,numericInput("score.act",tags$strong("ACT"),value=36,min=0,max=36,step=1)),column(7,radioButtons("score.opt","I want to ignore...",choices = c("SAT","ACT","Both"),selected="Both",inline = TRUE))
+                                                         )
+                                                  ),
+                                                
+                                                bsCollapsePanel(tags$strong("Your Maximum Tuition!"),style="primary",    
                                                     fluidRow(
                                                       column(width = 3,numericInput("max",tags$strong("Max Tution"),min = 0, max = 999999, value = 999999)),
                                                       column(width = 8, offset = 1,radioButtons("location",tags$strong("Tuition Options"),choices = list("State Resident", "Non-State Resident","Ignore Tuition"),selected = "Ignore Tuition", inline = FALSE))
-                                                    ))),
-                                                fluidRow(
-                                                  wellPanel(
+                                                    )
+                                                ),
+                                                
+                                                
+                                                bsCollapsePanel(tags$strong("Map Options"),style="primary",  
                                                     fluidRow(column(4,selectInput("Focus",tags$strong("Area of Focus"),choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate")),
                                                              column(6,radioButtons("opt",tags$strong("Map types"),choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE))),
                                                     fluidRow(column(10,radioButtons("output",tags$strong("Cluster by Options"),choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE)))
-                                                  )),
+                                                    #fluidRow(column())
+                                                  ),
                                                 actionButton("search", tags$strong("Start Searching!"))
                                   ),
                                   
@@ -71,22 +84,24 @@ ui =  div(id="canvas",
                              ############################################TEAM 2 IMPLEMENTATION ENDS############################################################
                     ),#Comparison ends here
                     #Data presentation
-                    tabPanel(strong(tags$i("Data Exploror")),
-                             fluidPage(
-                               tabsetPanel(
-                                 tabPanel(tags$strong("Filtering Data Set"),
-                                          dataTableOutput("mytable_1")),
-                                 tabPanel(tags$strong("General Data Set"),
-                                          dataTableOutput("mytable_2"))
-                                 
-                               )
-                               
-                             ),div(class="footer", "Applied Data Science Group 4")
-                             
-                    ),#data presentation ends here
                     #Introduction
                     tabPanel(strong(tags$i("About us")),
-                             textOutput("test.6")
+                             mainPanel(width=12,
+                                       h1("Project: A Shiny App Development"),
+                                       h2("Background"),
+                                       p(""),#Our motivation
+                                       h2("Project summary"),
+                                       p(""),#What did we do
+                                       br(),
+                                       p("   - ",strong("Statistics"), ""),
+                                       p("   - ",strong("Map"),"The map contains a searching panel where potential customers can use to locate the best school for them within the New York State. Multiple map options are also provided in order to provide a better user experiences of this app."),
+                                       p("   - ",strong("Data"),"The data used for comparing as well as locating schools can be found under the 'Data Exploror' section"),
+                                       h2("Outlook"),
+                                       p(""),
+                                       p(""),
+                                       br(),
+                                       p(em("Release 02/22/2017.","VERSION 1.0.0")),
+                                       p(em(a("Github link",href=""))))
                              ,div(class="footer", "Applied Data Science Group 4")
                              )#Introduciton ends here
                      
@@ -292,41 +307,62 @@ server = function(input, output){#Sever function starts
   output$myMap = renderLeaflet({
     leaflet()%>%
       setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
-      addProviderTiles("Esri.WorldStreetMap")%>%
+      addTiles(group = "Esri.WorldStreetMap") %>%
+      addProviderTiles("Stamen.Toner", group = "Toner by Stamen") %>%
+      addProviderTiles("OpenStreetMap", group = "OpenStreetMap") %>%
+      addProviderTiles("Thunderforest.SpinalMap", group = "Thunderforest.SpinalMap") %>%
+      addProviderTiles("Thunderforest.TransportDark", group = "Thunderforest.TransportDark") %>%
       addMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = paste(school.selection()$INSTNM,school.selection()$INSTURL), icon=list(iconUrl='https://cdn0.iconfinder.com/data/icons/back-to-school/90/school-learn-study-hat-graduate_2-512.png',iconSize=c(25,25)))%>%
-      addProviderTiles("Esri.WorldImagery",options = providerTileOptions(opacity = mapping.opt()$O))
+      addLayersControl(
+        baseGroups = c("Esri.WorldStreetMap","Toner by Stamen","OpenStreetMap","Thunderforest.SpinalMap","Thunderforest.TransportDark")
+      )%>%addMeasure(
+        position = "bottomleft"
+      )%>%addMiniMap()
       #"<br><strong>Average Score of SAT Reading: </strong>","<mark>",school.selection()$SATVRMID
       #"</mark>","<br><strong>Average Score of SAT Math: </strong>",school.selection()$SATMTMID
     })
   
-  outputmap = reactive({
-    if(input$output == "Degree")
-    {
-      list(info=school.selection()[,c("LONGITUDE","LATITUDE","HIGHDEG_1")], color = c("blue","green", "yellow", "orange", "red"))
-      
-    }
-    else if(input$output == "Length")
-    {
-      list(info=school.selection()[,c("LONGITUDE","LATITUDE","twoorfour")],color = c("yellow","red"))
-    }
-    else if(input$output == "Transfer Rate")
-    {
-      list(info=school.selection()[,c("LONGITUDE","LATITUDE","loworhigh")],color = c("yellow","red"))
-    }
-    else if(input$output == "Type")
-    {
-      list(info=school.selection()[,c("LONGITUDE","LATITUDE","partorfull")],color = c("yellow","red"))
-    }
-    
-  })
+ # outputmap = reactive({
+#    if(input$output == "Degree")
+ #   {
+#      list(info=school.selection()[,c("LONGITUDE","LATITUDE","HIGHDEG_1")], color = c("blue","green", "yellow", "orange", "red"))
+ #     
+#    }
+ #   else if(input$output == "Length")
+  #  {
+  #    list(info=school.selection()[,c("LONGITUDE","LATITUDE","twoorfour")],color = c("yellow","red"))
+  #  }
+  #  else if(input$output == "Transfer Rate")
+  #  {
+  #    list(info=school.selection()[,c("LONGITUDE","LATITUDE","loworhigh")],color = c("yellow","red"))
+  #  }
+  #  else if(input$output == "Type")
+  #  {
+   #   list(info=school.selection()[,c("LONGITUDE","LATITUDE","partorfull")],color = c("yellow","red"))
+  #  }
+  #  
+#  })
   
   output$myMap_1 = renderLeaflet({
-    leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("NASAGIBS.ViirsEarthAtNight2012")%>%addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)
+    leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("NASAGIBS.ViirsEarthAtNight2012")%>%addCircleMarkers(lng = school.selection()$LONGITUDE, lat =school.selection()$LATITUDE,clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1)(school.selection()$HIGHDEG_1), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1), values = school.selection()$HIGHDEG_1,opacity = 1)%>%addSimpleGraticule()
   })
   
-  output$myMap_2 = renderLeaflet({
-    leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("NASAGIBS.ViirsEarthAtNight2012")%>%addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)
+  #output$myMap_2 = renderLeaflet({
+  #  leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("NASAGIBS.ViirsEarthAtNight2012")%>%addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)
+  #})
+  
+  table.1 = reactive({
+    t = as.data.frame(college.filtered)
   })
+  table.2 = reactive({
+    t= as.data.frame(college)
+  })
+  output$mytable_1 = renderTable(
+    table.1()$t
+  )
+ # output$mytable_2 = renderTable(
+  #  table.2()$t
+  #)
   
   ###########################################TEAM 2 IMPLEMENTATION STARTS#################################################################################
   
