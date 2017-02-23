@@ -1,4 +1,3 @@
-library(shiny)
 packages.used=c("shiny","ggmap","leaflet","dplyr","shinyBS","plotly","extrafont","grDevices","shinyjs")
 
 # check packages that need to be installed.
@@ -89,7 +88,7 @@ shinyUI(fluidPage(
                                             bsCollapsePanel(tags$strong("Map Options"),style="primary",  
                                                             fluidRow(column(10,selectInput("Focus",tags$strong("Area of Focus"),choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate"))
                                                             ),
-                                                            fluidRow(column(10,radioButtons("output",tags$strong("Cluster by Options"),choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE)))
+                                                            fluidRow(column(10,radioButtons("output.cluster",tags$strong("Cluster by Options"),choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE)))
                                                             #fluidRow(column())
                                             
                                             ),

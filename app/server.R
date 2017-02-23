@@ -238,6 +238,7 @@ shinyServer(function(input, output) {
     
   })
   
+  
   output$map=renderUI({
     leafletOutput('myMap', width = "100%", height = 700)
   })
@@ -261,12 +262,36 @@ shinyServer(function(input, output) {
     #"</mark>","<br><strong>Average Score of SAT Math: </strong>",school.selection()$SATMTMID
   })
   
-  
-  
-  output$myMap_1 = renderLeaflet({
-    leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("OpenStreetMap.BlackAndWhite")%>%addCircleMarkers(lng = school.selection()$LONGITUDE, lat =school.selection()$LATITUDE,clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1)(school.selection()$HIGHDEG_1), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1), values = school.selection()$HIGHDEG_1,opacity = 1)%>%addSimpleGraticule()
+  outputmap = reactive({
+    if(input$output.cluster == "Degree")
+    {
+      list(info=school.selection()[,c("LONGITUDE","LATITUDE","HIGHDEG_1")], color = c("blue","green", "yellow", "orange", "red"))
+      
+    }
+    else if(input$output.cluster == "Length")
+    {
+      list(info=school.selection()[,c("LONGITUDE","LATITUDE","twoorfour")],color = c("yellow","red"))
+    }
+    else if(input$output.cluster == "Transfer Rate")
+    {
+      list(info=school.selection()[,c("LONGITUDE","LATITUDE","loworhigh")],color = c("yellow","red"))
+    }
+    else if(input$output.cluster == "Type")
+    {
+      list(info=school.selection()[,c("LONGITUDE","LATITUDE","partorfull")],color = c("yellow","red"))
+    }
+    
   })
-
+  
+  #output$myMap_1 = renderLeaflet({
+   # leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("OpenStreetMap.BlackAndWhite")%>%addCircleMarkers(lng = school.selection()$LONGITUDE, lat =school.selection()$LATITUDE,clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1)(school.selection()$HIGHDEG_1), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1), values = school.selection()$HIGHDEG_1,opacity = 1)%>%addSimpleGraticule()
+  #})
+  output$myMap_1 = renderLeaflet({
+  leaflet()%>%
+      setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
+      addProviderTiles("NASAGIBS.ViirsEarthAtNight2012")%>%
+      addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)
+   })
   
   
   ###########################################TEAM 2 IMPLEMENTATION STARTS#################################################################################
