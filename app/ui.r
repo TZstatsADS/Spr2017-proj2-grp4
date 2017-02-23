@@ -35,43 +35,54 @@ shinyUI(fluidPage(
                           div(class="outer",  
                               # lealfet map
                               uiOutput("map"),
-                              absolutePanel(id  = "controls", class = "panel panel-default", fixed = TRUE,
-                                            draggable = FALSE, top = 60, left = 10, bottom = "auto",
-                                            width = 500, height = "auto", cursor = "move",
-                                            wellPanel(sliderInput("opt","",min=-3,max=5,value=-3,step=1))
-                                            ),
+                              #absolutePanel(id  = "controls", class = "panel panel-default", fixed = TRUE,
+                               #             draggable = FALSE, top = 60, left = 10, bottom = "auto",
+                                #            width = 500, height = "auto", cursor = "move",
+                                 #           wellPanel(sliderInput("opt","",min=-3,max=5,value=-3,step=1))
+                                  #          ),
                               
                               #bootstrapPage(
                               #conditionalPanel(condition = "input$opt>0",
                               absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
-                                            draggable = TRUE, top = 60, left = 10, bottom = "auto",
-                                            width = 500, height = "auto", cursor = "move",
-                                            #HTML('<button data-toggle="collapse" data-target="#demo">Collapsible</button>'),
+                                            draggable = TRUE, top = 100, left = 5, bottom = "auto",
+                                            width = "auto", height = "auto", cursor = "move",
                                             #wellPanel(fluidRow(sliderInput("opt.232"," ",min=-4,max=4,step=1,value=-4))),
                                             #conditionalPanel(condition = "input$opt.232>0",
                                             wellPanel(style = "overflow-y:scroll; max-height: 600px",
-                                            bsCollapsePanel(tags$strong("Choose Your Major!"),style="primary",
-                                                            fluidRow(column(10,selectInput("major",tags$strong("Your Major"),choices = c("I don't konw...",major),selected = "I don't konw..."))
+                                          #bsCollapse(id = "default",
+                                          bsCollapse(id="collapse.filter",open="Filter", 
+                                          bsCollapsePanel(tags$strong("Filter"),style="primary",
+                                                            fluidRow(column(12,checkboxGroupInput("filter","Filtered By...",choices=list("Scores","Major","Tuition"),inline = TRUE))),
+                                                            fluidRow(column(10,uiOutput("ui.filter")))),
+                                                            
+                                                          
+                                                     #),
+                                         #bsCollapse(id="collapse.default",
+                                          bsCollapsePanel(tags$strong("Filter Options"),style = "primary",
+                                            bsCollapsePanel(tags$strong("Major"),style="info",
+                                                            fluidRow(column(10,selectInput("major",tags$strong("Your Major"),choices = c(major),selected = ""))
                                                             )
                                             ),
-                                            bsCollapsePanel(tags$strong("Update Your SAT Score!"),style="primary",
-                                                            fluidRow(column(3,numericInput("sat.reading",tags$strong("SAT Read"),value=800,min=0,max=800,step=10)),
-                                                                     column(3,numericInput("sat.math",tags$strong("SAT Math"),value=800,min=0,max=800,step=10),offset = 0),
-                                                                     column(3,numericInput("sat.writing",tags$strong("SAT Write"),value=800,min=20,max=800,step=10),offset = 0)
+                                            bsCollapsePanel(tags$strong("SAT"),style="info",
+                                                            fluidRow(column(3,numericInput("sat.reading",tags$strong("Read"),value=800,min=0,max=800,step=10)),
+                                                                     column(3,numericInput("sat.math",tags$strong("Math"),value=800,min=0,max=800,step=10),offset = 0),
+                                                                     column(3,numericInput("sat.writing",tags$strong("Write"),value=800,min=20,max=800,step=10),offset = 0)
                                                             )
                                             ),
                                             
-                                            bsCollapsePanel(tags$strong("Update Your ACT Score!"),style="primary",  
-                                                            fluidRow(column(3,numericInput("score.act",tags$strong("ACT"),value=36,min=0,max=36,step=1)),column(7,radioButtons("score.opt","I want to ignore...",choices = c("SAT","ACT","Both"),selected="Both",inline = TRUE))
+                                            bsCollapsePanel(tags$strong("ACT"),style="info",  
+                                                            fluidRow(column(10,numericInput("score.act",tags$strong("Cumulative Scores"),value=36,min=0,max=36,step=1))
                                                             )
                                             ),
                                             
-                                            bsCollapsePanel(tags$strong("Your Maximum Tuition!"),style="primary",    
+                                            bsCollapsePanel(tags$strong("Tuition"),style="info",    
                                                             fluidRow(
-                                                              column(width = 3,numericInput("max",tags$strong("Max Tution"),min = 0, max = 999999, value = 999999)),
-                                                              column(width = 8, offset = 1,radioButtons("location",tags$strong("Tuition Options"),choices = list("State Resident", "Non-State Resident","Ignore Tuition"),selected = "Ignore Tuition", inline = FALSE))
+                                                              column(10,numericInput("max",tags$strong("Max Tution"),min = 0, max = 90000, value = 10000))),
+                                                             fluidRow(column(10, offset = 1,radioButtons("location",tags$strong("Tuition Options"),choices = list("State Resident", "Non-State Resident"),selected = "", inline = FALSE))
                                                             )
-                                            ),
+                                            )
+                                           )
+                                           ),
                                             
                                             
                                             bsCollapsePanel(tags$strong("Map Options"),style="primary",  
@@ -79,21 +90,23 @@ shinyUI(fluidPage(
                                                                      column(6,radioButtons("opt",tags$strong("Map types"),choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE))),
                                                             fluidRow(column(10,radioButtons("output",tags$strong("Cluster by Options"),choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE)))
                                                             #fluidRow(column())
+                                            
                                             ),
-                                            actionButton("search", tags$strong("Start Searching!"))
+                                            actionButton("search", tags$strong("Searching!"))
                                                    )#WellPanel ends here
                               #
                               #)#Conditional Panel ends here
                               ),
                               
                               # output panel
+
                               absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                                             draggable = TRUE, top = 60, right = -30, bottom = "auto",
                                             width = 470, height = 400, cursor = "move",
-                                            
-                                            leafletOutput('myMap_1', width = "95%", height = 450)   
+
+                                            leafletOutput('myMap_1', width = "80%", height = 450)   
                               )
-                              
+                          
                               #absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                               #             draggable = TRUE, top = 500, right = -30, bottom = "auto",
                               #            width = 470, height = 400, cursor = "move",

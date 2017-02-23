@@ -26,6 +26,16 @@ major.frame = data.frame(major = major, index = major.index)
 
 shinyServer(function(input, output) {
   
+  output$ui.filter = renderUI({
+    if(c("Scores") %in% input$filter)
+    {radioButtons("sat.act","Which Score?",choices=list("SAT","ACT"),selected = "",inline=TRUE)}
+    else
+    {return()}
+    
+  })
+  
+  
+  
   mapping = reactive({
     
     if(input$Focus == "New York State")
@@ -101,43 +111,108 @@ shinyServer(function(input, output) {
   
   school.selection = eventReactive(input$search,{
     
-    if(input$major == "I don't konw...")
+    
+    if(c("Scores") %in% input$filter && c("Tuition") %in% input$filter)
     {
-      if(input$score.opt == "SAT")
-      {
-        if(input$location == "State Resident")
-        {
-          college.filtered %>% filter((ACTCMMID <= input$score.act) & TUITIONFEE_IN <= input$max)
-        }
-        else if(input$location == "Non-State Resident")
-        {
-          college.filtered %>% filter((ACTCMMID <= input$score.act) & TUITIONFEE_OUT <= input$max)
-          
-        }
-        else if(input$location == "Ignore Tuition")
-        {
-          college.filtered %>% filter((ACTCMMID <= input$score.act))
-          
-        }
-      }
-      else if(input$score.opt == "ACT")
+      if(input$sat.act=="SAT")
       {
         if(input$location == "State Resident")
         {
           college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)) & TUITIONFEE_IN <= input$max)
+          
         }
         else if(input$location == "Non-State Resident")
         {
           college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)) & TUITIONFEE_OUT <= input$max)
         }
-        else if(input$location == "Ignore Tuition")
+      }
+      else if(input$sat.act=="ACT")
+      {
+        if(input$location == "State Resident")
         {
-          college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)))
+          college.filtered %>% filter((ACTCMMID <= input$score.act) & TUITIONFEE_IN <= input$max)          
+        }
+        else if(input$location == "Non-State Resident")
+        {
+          college.filtered %>% filter((ACTCMMID <= input$score.act) & TUITIONFEE_OUT <= input$max)          
           
         }
+      } 
+    }
+    
+    else if(c("Major") %in% input$filter && c("Tuition") %in% input$filter)
+      {
+        if(input$location == "State Resident")
+        {
+          college.filtered %>% filter(TUITIONFEE_IN <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
+        }
+        else if(input$location == "Non-State Resident")
+        {
+
+          college.filtered %>% filter(TUITIONFEE_OUT <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
+        }
+      }
+        
+        else if(c("Scores") %in% input$filter && c("Major") %in% input$filter)
+        {
+          if(input$sat.act=="SAT")
+          {
+            college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))  & college.filtered[,major.data.index()] > major.data.frame.mean())
+            
+          }
+          else if(input$sat.act=="ACT")
+          {
+            college.filtered %>% filter((ACTCMMID <= input$score.act) & college.filtered[,major.data.index()] > major.data.frame.mean())
+            
+          } 
+        }
+          
+        else if(c("Scores") %in% input$filter && c("Tuition") %in% input$filter && c("Major") %in% input$filter)
+          {
+            if(input$sat.act=="SAT")
+            {
+              if(input$location == "State Resident")
+              {
+                college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)) & TUITIONFEE_IN <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
+                
+              }
+              else if(input$location == "Non-State Resident")
+              {
+
+                college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)) & TUITIONFEE_OUT <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
+                
+              }
+            }
+            else if(input$sat.act=="ACT")
+            {
+              if(input$location == "State Resident")
+              {
+                college.filtered %>% filter((ACTCMMID <= input$score.act) & TUITIONFEE_IN <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
+                
+              }
+              else if(input$location == "Non-State Resident")
+              {
+                college.filtered %>% filter((ACTCMMID <= input$score.act) & TUITIONFEE_OUT <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
+                
+                
+              }
+            } 
+        }
+    else if(c("Scores") %in% input$filter)
+    {
+      if(input$sat.act=="SAT")
+      {
+        college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)))
         
       }
-      else if(input$score.opt == "Both")
+      else if(input$sat.act=="ACT")
+      {
+        college.filtered %>% filter((ACTCMMID <= input$score.act))
+        
+      } 
+    }
+      
+      else if(c("Tuition") %in% input$filter)
       {
         if(input$location == "State Resident")
         {
@@ -146,69 +221,19 @@ shinyServer(function(input, output) {
         }
         else if(input$location == "Non-State Resident")
         {
-          college.filtered %>% filter(TUITIONFEE_OUT <= input$max)
-          
-        }
-        else if(input$location == "Ignore Tuition")
-        {
-          college.filtered %>% filter()
+          college.filtered %>% filter(TUITIONFEE_OUT <= input$max )
         }
       }
-    }
-    else if(input$major != "I don't konw...")
-    {
-      if(input$score.opt == "SAT")
-      {
-        if(input$location == "State Resident")
-        {
-          college.filtered %>% filter((ACTCMMID <= input$score.act) & TUITIONFEE_IN <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
-        }
-        else if(input$location == "Non-State Resident")
-        {
-          college.filtered %>% filter((ACTCMMID <= input$score.act) & TUITIONFEE_OUT <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
-          
-        }
-        else if(input$location == "Ignore Tuition")
-        {
-          college.filtered %>% filter((ACTCMMID <= input$score.act) & college.filtered[,major.data.index()] > major.data.frame.mean())
-          
-        }
-      }
-      else if(input$score.opt == "ACT")
-      {
-        if(input$location == "State Resident")
-        {
-          college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)) & TUITIONFEE_IN <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
-        }
-        else if(input$location == "Non-State Resident")
-        {
-          college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing)) & TUITIONFEE_OUT <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
-        }
-        else if(input$location == "Ignore Tuition")
-        {
-          college.filtered %>% filter(((SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math) | (SATVRMID <= input$sat.reading & SATWRMID <= input$sat.writing) | (SATWRMID <= input$sat.writing & SATMTMID <= input$sat.math)|(SATVRMID <= input$sat.reading & SATMTMID <= input$sat.math & SATWRMID <= input$sat.writing))  & college.filtered[,major.data.index()] > major.data.frame.mean())
-          
-        }
-      }
-      else if(input$score.opt == "Both")
-      {
-        if(input$location == "State Resident")
-        {
-          college.filtered %>% filter(TUITIONFEE_IN <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
-          
-        }
-        else if(input$location == "Non-State Resident")
-        {
-          college.filtered %>% filter(TUITIONFEE_OUT <= input$max & college.filtered[,major.data.index()] > major.data.frame.mean())
-          
-        }
-        else if(input$location == "Ignore Tuition")
+        
+        else if(c("Major") %in% input$filter)
         {
           college.filtered %>% filter(college.filtered[,major.data.index()] > major.data.frame.mean())
           
         }
-      }
-    }
+          
+    
+    
+    
     
     
   })
