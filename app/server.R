@@ -266,20 +266,20 @@ shinyServer(function(input, output) {
   outputmap = reactive({
     if(input$output.cluster == "Degree")
     {
-      list(info=school.selection()[,c("LONGITUDE","LATITUDE","HIGHDEG_1")], color = c("blue","green", "yellow", "orange", "red"))
+      list(info=school.selection()[,c("LONGITUDE","LATITUDE","HIGHDEG_1", "INSTNM")], color = c("blue","green", "yellow", "orange", "red"))
       
     }
     else if(input$output.cluster == "Length")
     {
-      list(info=school.selection()[,c("LONGITUDE","LATITUDE","twoorfour")],color = c("yellow","red"))
+      list(info=school.selection()[,c("LONGITUDE","LATITUDE","twoorfour","INSTNM")],color = c("yellow","red"))
     }
     else if(input$output.cluster == "Transfer Rate")
     {
-      list(info=school.selection()[,c("LONGITUDE","LATITUDE","loworhigh")],color = c("yellow","red"))
+      list(info=school.selection()[,c("LONGITUDE","LATITUDE","loworhigh","INSTNM")],color = c("yellow","red"))
     }
     else if(input$output.cluster == "Type")
     {
-      list(info=school.selection()[,c("LONGITUDE","LATITUDE","partorfull")],color = c("yellow","red"))
+      list(info=school.selection()[,c("LONGITUDE","LATITUDE","partorfull","INSTNM")],color = c("yellow","red"))
     }
     
   })
@@ -291,16 +291,17 @@ shinyServer(function(input, output) {
   leaflet()%>%
       setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
       addProviderTiles("OpenStreetMap.BlackAndWhite")%>%
-      addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(iconCreateFunction =
+      addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],popup=outputmap()[[1]][,4],clusterOptions = markerClusterOptions(iconCreateFunction =
                                                                                                                       JS("
                                                                                                                          function(cluster) {
+                                                                                                                         
                                                                                                                          return new L.DivIcon({
-                                                                                                                         html: '<div style=\"background-color:rgba(77,77,77,0.5)\"><span>' + cluster.getChildCount() + '</div><span>',
+                                                                                                                         html: '<div style=\"background-color:rgba(77,77,77,0.5)\"><span><b>' + cluster.getChildCount() + '</b></div><span>',
                                                                                                                          className: 'marker-cluster'
                                                                                                                          });
-                                                                                                                         }")),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)
+                                                                                                                         }")),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)%>%addSimpleGraticule()
    })
-  
+ 
   
   ###########################################TEAM 2 IMPLEMENTATION STARTS#################################################################################
   
