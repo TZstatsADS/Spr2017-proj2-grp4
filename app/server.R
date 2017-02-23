@@ -248,13 +248,14 @@ shinyServer(function(input, output) {
     leaflet()%>%
       setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
       addTiles(group = "Esri.WorldStreetMap") %>%
+      addProviderTiles("Esri.WorldImagery", group = "Esri.WorldImagery") %>%
       addProviderTiles("Stamen.Toner", group = "Toner by Stamen") %>%
       addProviderTiles("OpenStreetMap", group = "OpenStreetMap") %>%
       addProviderTiles("Thunderforest.SpinalMap", group = "Thunderforest.SpinalMap") %>%
       addProviderTiles("Thunderforest.TransportDark", group = "Thunderforest.TransportDark") %>%
       addMarkers(lng = school.selection()$LONGITUDE, lat = school.selection()$LATITUDE, popup = paste(school.selection()$INSTNM,school.selection()$INSTURL), icon=list(iconUrl='https://cdn0.iconfinder.com/data/icons/back-to-school/90/school-learn-study-hat-graduate_2-512.png',iconSize=c(25,25)))%>%
       addLayersControl(
-        baseGroups = c("Esri.WorldStreetMap","Toner by Stamen","OpenStreetMap","Thunderforest.SpinalMap","Thunderforest.TransportDark")
+        baseGroups = c("Esri.WorldStreetMap","Esri.WorldImagery","Toner by Stamen","OpenStreetMap","Thunderforest.SpinalMap","Thunderforest.TransportDark")
       )%>%addMeasure(
         position = "bottomleft"
       )%>%addMiniMap()
@@ -289,8 +290,15 @@ shinyServer(function(input, output) {
   output$myMap_1 = renderLeaflet({
   leaflet()%>%
       setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
-      addProviderTiles("NASAGIBS.ViirsEarthAtNight2012")%>%
-      addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)
+      addProviderTiles("OpenStreetMap.BlackAndWhite")%>%
+      addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],clusterOptions = markerClusterOptions(iconCreateFunction =
+                                                                                                                      JS("
+                                                                                                                         function(cluster) {
+                                                                                                                         return new L.DivIcon({
+                                                                                                                         html: '<div style=\"background-color:rgba(77,77,77,0.5)\"><span>' + cluster.getChildCount() + '</div><span>',
+                                                                                                                         className: 'marker-cluster'
+                                                                                                                         });
+                                                                                                                         }")),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)
    })
   
   
