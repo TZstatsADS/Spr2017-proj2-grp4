@@ -28,7 +28,7 @@ major.frame = data.frame(major = major, index = major.index)
 shinyUI(fluidPage(
   div(id="canvas",
       
-      navbarPage(strong("Our App's name
+      navbarPage(strong("NY School Hunter
                         ",style="color: white;"), theme="style.css",
                  
                  tabPanel(strong(tags$i("Map")),
@@ -51,7 +51,8 @@ shinyUI(fluidPage(
                                             wellPanel(style = "overflow-y:scroll; max-height: 600px",
                                           #bsCollapse(id = "default",
                                           bsCollapse(id="collapse.filter",open="Filter", 
-                                          bsCollapsePanel(tags$strong("Filter"),style="primary",
+                                          
+                                                     bsCollapsePanel(tags$strong("Filter"),style="primary",
                                                             fluidRow(column(12,checkboxGroupInput("filter","Filtered By...",choices=list("Scores","Major","Tuition"),inline = TRUE))),
                                                             fluidRow(column(10,uiOutput("ui.filter")))),
                                                             
@@ -86,8 +87,8 @@ shinyUI(fluidPage(
                                             
                                             
                                             bsCollapsePanel(tags$strong("Map Options"),style="primary",  
-                                                            fluidRow(column(4,selectInput("Focus",tags$strong("Area of Focus"),choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate")),
-                                                                     column(6,radioButtons("opt",tags$strong("Map types"),choices=c("Regular","Satellite"),selected = "Regular",inline = TRUE))),
+                                                            fluidRow(column(10,selectInput("Focus",tags$strong("Area of Focus"),choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate"))
+                                                            ),
                                                             fluidRow(column(10,radioButtons("output",tags$strong("Cluster by Options"),choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE)))
                                                             #fluidRow(column())
                                             
@@ -356,12 +357,11 @@ shinyUI(fluidPage(
                                         p("   - ",strong("Song Wang")),
                                           p("   - ",strong("Senyao Han")),
                                             p("   - ",strong("Zijun Nie")),
-                                    h3("Outlook"),
                                     p(""),
                                     p(""),
                                     br(),
                                     p(em("Release 02/22/2017.","VERSION 1.0.0")),
-                                    p(em(a("Github link",href=""))))
+                                    p(em(a("Github link",href="https://github.com/TZstatsADS/Spr2017-proj2-grp4.git"))))
                           ,div(class="footer", "Applied Data Science Group 4")
                  )#Introduciton ends here
                  
