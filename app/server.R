@@ -294,7 +294,6 @@ shinyServer(function(input, output) {
       addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],popup=outputmap()[[1]][,4],clusterOptions = markerClusterOptions(iconCreateFunction =
                                                                                                                       JS("
                                                                                                                          function(cluster) {
-                                                                                                                         
                                                                                                                          return new L.DivIcon({
                                                                                                                          html: '<div style=\"background-color:rgba(77,77,77,0.5)\"><span><b>' + cluster.getChildCount() + '</b></div><span>',
                                                                                                                          className: 'marker-cluster'
