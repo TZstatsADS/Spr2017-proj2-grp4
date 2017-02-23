@@ -13,7 +13,7 @@ The **learning goals** for this project is:
 
 *The above general statement about project 2 can be removed once you are finished with your project. It is optional.
 
-## Project Title an RShiny app development project (NY School Hunter)
+## Project Title: an RShiny app development project (NY School Hunter)
 
 Term: Spring 2017
 
