@@ -264,7 +264,7 @@ shinyServer(function(input, output) {
   
   
   output$myMap_1 = renderLeaflet({
-    leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("NASAGIBS.ViirsEarthAtNight2012")%>%addCircleMarkers(lng = school.selection()$LONGITUDE, lat =school.selection()$LATITUDE,clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1)(school.selection()$HIGHDEG_1), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1), values = school.selection()$HIGHDEG_1,opacity = 1)%>%addSimpleGraticule()
+    leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("OpenStreetMap.BlackAndWhite")%>%addCircleMarkers(lng = school.selection()$LONGITUDE, lat =school.selection()$LATITUDE,clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1)(school.selection()$HIGHDEG_1), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1), values = school.selection()$HIGHDEG_1,opacity = 1)%>%addSimpleGraticule()
   })
 
   
