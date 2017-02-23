@@ -1,3 +1,13 @@
+packages.used=c("shiny","ggmap","leaflet","dplyr","shinyBS","plotly","extrafont","grDevices","shinyjs")
+
+# check packages that need to be installed.
+packages.needed=setdiff(packages.used,intersect(installed.packages()[,1],packages.used))
+
+# install additional packages
+if(length(packages.needed)>0){
+  install.packages(packages.needed, dependencies = TRUE)
+}
+
 library(shiny)
 library(ggmap)
 library(leaflet)
@@ -6,6 +16,8 @@ library(shinyBS)
 library(plotly)
 library(extrafont)
 library(grDevices)
+library(shinyjs)
+
 college.filtered = read.csv("../data/school.select.csv",header = TRUE,stringsAsFactors = FALSE)
 college =  read.csv("../data/College2014_15_new.csv",header = TRUE,stringsAsFactors = FALSE, na.strings = "NULL")
 major = c("Agriculture, Agriculture Operations, And Related Sciences","Natural Resources And Conservation", "Architecture And Related Services","Area, Ethnic, Cultural, Gender, And Group Studies"," Communication, Journalism, And Related Programs","Communications Technologies/Technicians And Support Services","Computer And Information Sciences And Support Services","Personal And Culinary Services"," Education","Engineering","Engineering Technologies And Engineering-Related Fields","Foreign Languages, Literatures, And Linguistics"," Family And Consumer Sciences/Human Sciences","Legal Professions And Studies","English Language And Literature/Letters","Liberal Arts And Sciences, General Studies And Humanities","Library Science"," Biological And Biomedical Sciences","Mathematics And Statistics","Military Technologies And Applied Sciences","Multi/Interdisciplinary Studies","Parks, Recreation, Leisure, And Fitness Studies","Philosophy And Religious Studies","Theology And Religious Vocations"," Physical Sciences"," Science Technologies/Technicians"," Psychology"," Homeland Security, Law Enforcement, Firefighting And Related Protective Services","Public Administration And Social Service Professions","Social Sciences","Construction Trades","Mechanic And Repair Technologies/Technicians","Precision Production","Transportation And Materials Moving","Visual And Performing Arts","Health Professions And Related Programs","Business, Management, Marketing, And Related Support Services","History")
@@ -13,6 +25,7 @@ major.index =c("PCIP01","PCIP03","PCIP04","PCIP05","PCIP09","PCIP10","PCIP11","P
 major.frame = data.frame(major = major, index = major.index)
 
 shinyServer(function(input, output) {
+  
   mapping = reactive({
     
     if(input$Focus == "New York State")

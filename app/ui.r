@@ -1,4 +1,15 @@
 library(shiny)
+packages.used=c("shiny","ggmap","leaflet","dplyr","shinyBS","plotly","extrafont","grDevices","shinyjs")
+
+# check packages that need to be installed.
+packages.needed=setdiff(packages.used,intersect(installed.packages()[,1],packages.used))
+
+# install additional packages
+if(length(packages.needed)>0){
+  install.packages(packages.needed, dependencies = TRUE)
+}
+
+library(shiny)
 library(ggmap)
 library(leaflet)
 library(dplyr)
@@ -6,6 +17,7 @@ library(shinyBS)
 library(plotly)
 library(extrafont)
 library(grDevices)
+library(shinyjs)
 
 college.filtered = read.csv("../data/school.select.csv",header = TRUE,stringsAsFactors = FALSE)
 college =  read.csv("../data/College2014_15_new.csv",header = TRUE,stringsAsFactors = FALSE, na.strings = "NULL")
@@ -16,17 +28,27 @@ major.frame = data.frame(major = major, index = major.index)
 shinyUI(fluidPage(
   div(id="canvas",
       
-      navbarPage(strong("Our App's name",style="color: white;"), theme="style.css",
+      navbarPage(strong("Our App's name
+                        ",style="color: white;"), theme="style.css",
                  
                  tabPanel(strong(tags$i("Map")),
                           div(class="outer",  
                               # lealfet map
                               uiOutput("map"),
+                              absolutePanel(id  = "controls", class = "panel panel-default", fixed = TRUE,
+                                            draggable = FALSE, top = 60, left = 10, bottom = "auto",
+                                            width = 500, height = "auto", cursor = "move",
+                                            wellPanel(sliderInput("opt","",min=-3,max=5,value=-3,step=1))
+                                            ),
                               
-                              # control panel
+                              #bootstrapPage(
+                              #conditionalPanel(condition = "input$opt>0",
                               absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                                             draggable = TRUE, top = 60, left = 10, bottom = "auto",
                                             width = 500, height = "auto", cursor = "move",
+                                            #HTML('<button data-toggle="collapse" data-target="#demo">Collapsible</button>'),
+                                            #wellPanel(fluidRow(sliderInput("opt.232"," ",min=-4,max=4,step=1,value=-4))),
+                                            #conditionalPanel(condition = "input$opt.232>0",
                                             wellPanel(style = "overflow-y:scroll; max-height: 600px",
                                             bsCollapsePanel(tags$strong("Choose Your Major!"),style="primary",
                                                             fluidRow(column(10,selectInput("major",tags$strong("Your Major"),choices = c("I don't konw...",major),selected = "I don't konw..."))
@@ -59,7 +81,9 @@ shinyUI(fluidPage(
                                                             #fluidRow(column())
                                             ),
                                             actionButton("search", tags$strong("Start Searching!"))
-                              )
+                                                   )#WellPanel ends here
+                              #
+                              #)#Conditional Panel ends here
                               ),
                               
                               # output panel
