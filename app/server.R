@@ -25,7 +25,7 @@ major = c("Agriculture, Agriculture Operations, And Related Sciences","Natural R
 major.index =c("PCIP01","PCIP03","PCIP04","PCIP05","PCIP09","PCIP10","PCIP11","PCIP12","PCIP13","PCIP14","PCIP15","PCIP16","PCIP19","PCIP22","PCIP23","PCIP24","PCIP25","PCIP26","PCIP27","PCIP29","PCIP30","PCIP31","PCIP38","PCIP39","PCIP40","PCIP41","PCIP42","PCIP43","PCIP44","PCIP45","PCIP46","PCIP47","PCIP48","PCIP49","PCIP50","PCIP51","PCIP52","PCIP54")
 major.frame = data.frame(major = major, index = major.index)
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output,session) {
   
   output$ui.filter = renderUI({
     if(c("Scores") %in% input$filter)
@@ -289,19 +289,23 @@ shinyServer(function(input, output) {
    # leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("OpenStreetMap.BlackAndWhite")%>%addCircleMarkers(lng = school.selection()$LONGITUDE, lat =school.selection()$LATITUDE,clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1)(school.selection()$HIGHDEG_1), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1), values = school.selection()$HIGHDEG_1,opacity = 1)%>%addSimpleGraticule()
   #})
   output$myMap_1 = renderLeaflet({
-  leaflet()%>%
-      setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
-      addProviderTiles("OpenStreetMap.BlackAndWhite")%>%
+  
+    leaflet()%>% addTiles()%>%addProviderTiles("OpenStreetMap.BlackAndWhite")%>%
       addCircleMarkers(lng = outputmap()[[1]][,1], lat = outputmap()[[1]][,2],popup=outputmap()[[1]][,4],clusterOptions = markerClusterOptions(iconCreateFunction =
-                                                                                                                      JS("
-                                                                                                                         function(cluster) {
-                                                                                                                         return new L.DivIcon({
-                                                                                                                         html: '<div style=\"background-color:rgba(77,77,77,0.5)\"><span><b>' + cluster.getChildCount() + '</b></div><span>',
-                                                                                                                         className: 'marker-cluster'
-                                                                                                                         });
-                                                                                                                         }")),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)%>%addSimpleGraticule()
+                                                                                                                                                 JS("
+                                                                                                                                                    function(cluster) {
+                                                                                                                                                    return new L.DivIcon({
+                                                                                                                                                    html: '<div style=\"background-color:rgba(77,77,77,0.5)\"><span><b>' + cluster.getChildCount() + '</b></div><span>',
+                                                                                                                                                    className: 'marker-cluster'
+                                                                                                                                                    });
+                                                                                                                                                    }")),fillColor=colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3])(outputmap()[[1]][,3]), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette = outputmap()[[2]],domain = outputmap()[[1]][,3]), values = outputmap()[[1]][,3],opacity = 1)%>%addSimpleGraticule()
+      
    })
- 
+  
+  observe({
+    b <- input$myMap_bounds
+    leafletProxy("myMap_1") %>% setView(mean(c(b$west, b$east)), mean(c(b$north, b$south)), input$myMap_zoom)
+  })
   
   ###########################################TEAM 2 IMPLEMENTATION STARTS#################################################################################
   
