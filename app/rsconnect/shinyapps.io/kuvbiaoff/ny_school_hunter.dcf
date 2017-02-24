@@ -1,0 +1,11 @@
+name: ny_school_hunter
+title: NY School Hunter
+account: kuvbiaoff
+server: shinyapps.io
+appId: 158918
+bundleId: 722948
+url: https://kuvbiaoff.shinyapps.io/ny_school_hunter/
+when: 1487902335.63254
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: comparison_2_20.R|comparison_2_21.R|comparison_2_22.R|Final App(2).R|Final App.11.R|README.md|Structure.backup - Copy - Copy.R|Structure.R|test_comparison.R|test_comparison_02_19.R|test_comparison_1.R|test_comparison_new.R
