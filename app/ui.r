@@ -89,7 +89,7 @@ shinyUI(fluidPage(
                                             bsCollapsePanel(tags$strong("Map Options"),style="primary",  
                                                             fluidRow(column(10,selectInput("Focus",tags$strong("Area of Focus"),choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate"))
                                                             ),
-                                                            fluidRow(column(10,radioButtons("output.cluster",tags$strong("Cluster by Options"),choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE)))
+                                                            fluidRow(column(12,radioButtons("output.cluster",tags$strong("Cluster by Options"),choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE)))
                                                             #fluidRow(column())
                                             
                                             ),
@@ -101,11 +101,13 @@ shinyUI(fluidPage(
                               
                               # output panel
 
-                              absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
+                              absolutePanel(class = "panel panel-default", fixed = TRUE,
                                             draggable = TRUE, top = 60, right = 0, bottom = "auto",
-                                            width = 450, height = 450, cursor = "move",
-
-                                            leafletOutput('myMap_1', width = "102%", height = 450)   
+                                            width = 450, height = 40, cursor = "move",
+                                            
+                              bsCollapsePanel(tags$strong("Classification Map"),style = "primary",    
+                                  leafletOutput('myMap_1', width = "102%", height = 450)
+                              )#Collapse panel ends here
                               )
                           
                               #absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
