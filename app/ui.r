@@ -79,7 +79,7 @@ shinyUI(fluidPage(
                                             bsCollapsePanel(tags$strong("Tuition"),style="info",    
                                                             fluidRow(
                                                               column(10,numericInput("max",tags$strong("Max Tution"),min = 0, max = 90000, value = 10000))),
-                                                             fluidRow(column(10, offset = 1,radioButtons("location",tags$strong("Tuition Options"),choices = list("State Resident", "Non-State Resident"),selected = "", inline = FALSE))
+                                                             fluidRow(column(10, offset = 1,radioButtons("location",tags$strong("Tuition Options"),choices = list("State Resident", "Non-State Resident"),selected = "State Resident", inline = FALSE))
                                                             )
                                             )
                                            )
