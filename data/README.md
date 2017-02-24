@@ -7,4 +7,5 @@ The data directory contains data used in the analysis. This is treated as read o
 **College2014_15.new.csv** contains data used in the second tab for comparing different colleges and universities. 
 **variable_names.docx** contains variables we choose to focus on when analyzing the features of colleges and universities.
 
+The dictionary excel file contains the defintion of each variable recorded in school.select and College2014_15.new.
 The rds files are created during deploying process.
