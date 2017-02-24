@@ -17,10 +17,11 @@ library(plotly)
 library(extrafont)
 library(grDevices)
 library(shinyjs)
+
+#Read in  files
 college.filtered = readRDS("../data/school.select.rds")
 college =  readRDS("../data/College2014_15_new.rds")
-#college.filtered = read.csv("../data/school.select.csv",header = TRUE,stringsAsFactors = FALSE)
-#college =  read.csv("../data/College2014_15_new.csv",header = TRUE,stringsAsFactors = FALSE, na.strings = "NULL")
+#Support data frames
 major = c("Agriculture, Agriculture Operations, And Related Sciences","Natural Resources And Conservation", "Architecture And Related Services","Area, Ethnic, Cultural, Gender, And Group Studies"," Communication, Journalism, And Related Programs","Communications Technologies/Technicians And Support Services","Computer And Information Sciences And Support Services","Personal And Culinary Services"," Education","Engineering","Engineering Technologies And Engineering-Related Fields","Foreign Languages, Literatures, And Linguistics"," Family And Consumer Sciences/Human Sciences","Legal Professions And Studies","English Language And Literature/Letters","Liberal Arts And Sciences, General Studies And Humanities","Library Science"," Biological And Biomedical Sciences","Mathematics And Statistics","Military Technologies And Applied Sciences","Multi/Interdisciplinary Studies","Parks, Recreation, Leisure, And Fitness Studies","Philosophy And Religious Studies","Theology And Religious Vocations"," Physical Sciences"," Science Technologies/Technicians"," Psychology"," Homeland Security, Law Enforcement, Firefighting And Related Protective Services","Public Administration And Social Service Professions","Social Sciences","Construction Trades","Mechanic And Repair Technologies/Technicians","Precision Production","Transportation And Materials Moving","Visual And Performing Arts","Health Professions And Related Programs","Business, Management, Marketing, And Related Support Services","History")
 major.index =c("PCIP01","PCIP03","PCIP04","PCIP05","PCIP09","PCIP10","PCIP11","PCIP12","PCIP13","PCIP14","PCIP15","PCIP16","PCIP19","PCIP22","PCIP23","PCIP24","PCIP25","PCIP26","PCIP27","PCIP29","PCIP30","PCIP31","PCIP38","PCIP39","PCIP40","PCIP41","PCIP42","PCIP43","PCIP44","PCIP45","PCIP46","PCIP47","PCIP48","PCIP49","PCIP50","PCIP51","PCIP52","PCIP54")
 major.frame = data.frame(major = major, index = major.index)
@@ -35,21 +36,11 @@ shinyUI(fluidPage(
                           div(class="outer",  
                               # lealfet map
                               uiOutput("map"),
-                              #absolutePanel(id  = "controls", class = "panel panel-default", fixed = TRUE,
-                               #             draggable = FALSE, top = 60, left = 10, bottom = "auto",
-                                #            width = 500, height = "auto", cursor = "move",
-                                 #           wellPanel(sliderInput("opt","",min=-3,max=5,value=-3,step=1))
-                                  #          ),
-                              
-                              #bootstrapPage(
-                              #conditionalPanel(condition = "input$opt>0",
                               absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
                                             draggable = TRUE, top = 100, left = 5, bottom = "auto",
                                             width = "auto", height = "auto", cursor = "move",
-                                            #wellPanel(fluidRow(sliderInput("opt.232"," ",min=-4,max=4,step=1,value=-4))),
-                                            #conditionalPanel(condition = "input$opt.232>0",
                                             wellPanel(style = "overflow-y:scroll; max-height: 600px",
-                                          #bsCollapse(id = "default",
+                                          
                                           bsCollapse(id="collapse.filter",open="Filter", 
                                           
                                                      bsCollapsePanel(tags$strong("Filter"),style="primary",
@@ -57,8 +48,6 @@ shinyUI(fluidPage(
                                                             fluidRow(column(10,uiOutput("ui.filter")))),
                                                             
                                                           
-                                                     #),
-                                         #bsCollapse(id="collapse.default",
                                           bsCollapsePanel(tags$strong("Filter Options"),style = "primary",
                                             bsCollapsePanel(tags$strong("Major"),style="info",
                                                             fluidRow(column(10,selectInput("major",tags$strong("Your Major"),choices = c(major),selected = ""))
@@ -90,16 +79,13 @@ shinyUI(fluidPage(
                                                             fluidRow(column(10,selectInput("Focus",tags$strong("Area of Focus"),choices = c("New York State","New York City","Western New York","Finger Lakes","Southern Tier","Central New York","North Country","Mohawk Valley","Capital District","Hudson Valley","Long Island"), selected = "New York Sate"))
                                                             ),
                                                             fluidRow(column(12,radioButtons("output.cluster",tags$strong("Classification Options"),choices=list("Degree","Length","Transfer Rate","Type"),selected = "Degree",inline=TRUE)))
-                                                            #fluidRow(column())
-                                            
+
                                             ),
                                             actionButton("search", tags$strong("Searching!"))
                                                    )#WellPanel ends here
-                              #
-                              #)#Conditional Panel ends here
+                              
                               ),
                               
-                              # output panel
 
                               absolutePanel(class = "panel panel-default", fixed = TRUE,
                                             draggable = TRUE, top = 50, right = 0, bottom = "auto",
@@ -110,12 +96,7 @@ shinyUI(fluidPage(
                               )#Collapse panel ends here
                               )
                           
-                              #absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
-                              #             draggable = TRUE, top = 500, right = -30, bottom = "auto",
-                              #            width = 470, height = 400, cursor = "move",
-                              
-                              #           leafletOutput("myMap_2",width="95%",height=450)
-                              #)                                 
+                                                           
                           )
                           ,div(class="footer", "Applied Data Science Group 4")
                  ),
@@ -131,8 +112,6 @@ shinyUI(fluidPage(
                           fluidRow(align="center",splitLayout(cellWidths = c("50%","50%"),
                                                               uiOutput("ui.1"),
                                                               uiOutput("ui.2")
-                                                              #selectInput("input1",label="Select a School",choices=college$INSTNM,size=10,selectize=F,width="90%"),
-                                                              #selectInput("input2",label="Select a School",choices=college$INSTNM,size=10,selectize=F,width="90%")
                           )
                           ),
                           br(),br(),
@@ -140,21 +119,7 @@ shinyUI(fluidPage(
                                                               imageOutput("logo1",height = "400", width = "400"),imageOutput("logo2",height = "400", width = "400")
                           )),
                           
-                          #fluidRow(align="center",
-                          #         style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-                          #         column(6,offset=3,
-                          #                br(),
-                          #                helpText( strong("help_test" , style="color:Orange ; font-family: 'times'; font-size:30pt ; font-type:bold" )) ,
-                          #               hr()
-                          #        )),
-                          
-                          # === Some text to explain the Figure:
-                          #fluidRow(align="justify",
-                          #         style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-                          #         column(6,offset=3,
-                          #                br(),"explain_test",br()
-                          #         )
-                          #),
+                         
                           br(),
                           
                           
@@ -169,12 +134,7 @@ shinyUI(fluidPage(
                                    )),
                           
                           # === Some text to explain the Figure:
-                          #fluidRow(align="justify",
-                          #         style="opacity:0.9; background-color: white ;margin-top: 0px; width: 100%;",
-                          #         column(6,offset=3,
-                          #                br(),"explain_test2",br(),br(),br(),br()
-                          #         )
-                          #),
+                          
                           br(),
                           # === display instnm
                           fluidRow(align = "center",splitLayout(cellWidths = c("50%","50%"),
@@ -354,11 +314,11 @@ shinyUI(fluidPage(
                                       The side-by-side school comparison feature allows users to see a detailed breakdown of meaningful data and statistics from our available data on each school."),#What did we do
                                    
                                     h3("Team Members"),
-                                    p("   - ",strong("Ka Heng (Helen) Lo - Presenter")),
-                                      p("   - ",strong("Boxuan Zhao")),
-                                        p("   - ",strong("Song Wang")),
-                                          p("   - ",strong("Senyao Han")),
-                                            p("   - ",strong("Zijun Nie")),
+                                    p("   - ",strong("I. Ka Heng (Helen) Lo - Presenter")),
+                                      p("   - ",strong("II. Boxuan Zhao")),
+                                        p("   - ",strong("III. Zijun Nie")),
+                                          p("   - ",strong("IV. Senyao Han")),
+                                            p("   - ",strong("V. Song Wang")),
                                     p(""),
                                     p(""),
                                     br(),

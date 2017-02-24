@@ -17,16 +17,19 @@ library(plotly)
 library(extrafont)
 library(grDevices)
 library(shinyjs)
+
+#Read in Files
 college.filtered = readRDS("../data/school.select.rds")
 college =  readRDS("../data/College2014_15_new.rds")
-#college.filtered = read.csv("../data/school.select.csv",header = TRUE,stringsAsFactors = FALSE)
-#college =  read.csv("../data/College2014_15_new.csv",header = TRUE,stringsAsFactors = FALSE, na.strings = "NULL")
+
+#Support data frame
 major = c("Agriculture, Agriculture Operations, And Related Sciences","Natural Resources And Conservation", "Architecture And Related Services","Area, Ethnic, Cultural, Gender, And Group Studies"," Communication, Journalism, And Related Programs","Communications Technologies/Technicians And Support Services","Computer And Information Sciences And Support Services","Personal And Culinary Services"," Education","Engineering","Engineering Technologies And Engineering-Related Fields","Foreign Languages, Literatures, And Linguistics"," Family And Consumer Sciences/Human Sciences","Legal Professions And Studies","English Language And Literature/Letters","Liberal Arts And Sciences, General Studies And Humanities","Library Science"," Biological And Biomedical Sciences","Mathematics And Statistics","Military Technologies And Applied Sciences","Multi/Interdisciplinary Studies","Parks, Recreation, Leisure, And Fitness Studies","Philosophy And Religious Studies","Theology And Religious Vocations"," Physical Sciences"," Science Technologies/Technicians"," Psychology"," Homeland Security, Law Enforcement, Firefighting And Related Protective Services","Public Administration And Social Service Professions","Social Sciences","Construction Trades","Mechanic And Repair Technologies/Technicians","Precision Production","Transportation And Materials Moving","Visual And Performing Arts","Health Professions And Related Programs","Business, Management, Marketing, And Related Support Services","History")
 major.index =c("PCIP01","PCIP03","PCIP04","PCIP05","PCIP09","PCIP10","PCIP11","PCIP12","PCIP13","PCIP14","PCIP15","PCIP16","PCIP19","PCIP22","PCIP23","PCIP24","PCIP25","PCIP26","PCIP27","PCIP29","PCIP30","PCIP31","PCIP38","PCIP39","PCIP40","PCIP41","PCIP42","PCIP43","PCIP44","PCIP45","PCIP46","PCIP47","PCIP48","PCIP49","PCIP50","PCIP51","PCIP52","PCIP54")
 major.frame = data.frame(major = major, index = major.index)
 
 shinyServer(function(input, output,session) {
   
+  #Define reactive ui for scores
   output$ui.filter = renderUI({
     if(c("Scores") %in% input$filter)
     {radioButtons("sat.act","Which Score?",choices=list("SAT","ACT"),selected = "",inline=TRUE)}
@@ -87,19 +90,6 @@ shinyServer(function(input, output,session) {
     
   })
   
-  #Define interactive map change
-  mapping.opt = reactive({
-    
-    if(input$opt=="Regular")
-    {
-      list(O=0.1)
-    }
-    else if(input$opt=="Satellite")
-    {
-      list(O=0.95)
-    }
-  })
-  
   #Get interactive major index
   major.data.index = reactive({
     major.frame[which(major.frame$major == input$major),"index"]
@@ -110,6 +100,7 @@ shinyServer(function(input, output,session) {
     mean(college.filtered[,major.data.index()])
   })
   
+  #Filtering Process
   school.selection = eventReactive(input$search,{
     
     
@@ -248,7 +239,7 @@ shinyServer(function(input, output,session) {
     leafletOutput('myMap', width = "100%", height = 700)
   })
   
-  
+  #Main Map definition
   output$myMap = renderLeaflet({
     leaflet()%>%
       setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%
@@ -264,8 +255,6 @@ shinyServer(function(input, output,session) {
       )%>%addMeasure(
         position = "topright"
       )%>%addMiniMap()
-    #"<br><strong>Average Score of SAT Reading: </strong>","<mark>",school.selection()$SATVRMID
-    #"</mark>","<br><strong>Average Score of SAT Math: </strong>",school.selection()$SATMTMID
   })
   
   outputmap = reactive({
@@ -289,9 +278,7 @@ shinyServer(function(input, output,session) {
     
   })
   
-  #output$myMap_1 = renderLeaflet({
-   # leaflet()%>%setView(lng = mapping()$X, lat = mapping()$Y, zoom = mapping()$Z)%>%addProviderTiles("OpenStreetMap.BlackAndWhite")%>%addCircleMarkers(lng = school.selection()$LONGITUDE, lat =school.selection()$LATITUDE,clusterOptions = markerClusterOptions(),fillColor=colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1)(school.selection()$HIGHDEG_1), stroke=FALSE, fillOpacity=0.8)%>%addLegend("bottomright", pal = colorFactor(palette =c("blue","green", "yellow", "orange", "red"),domain = school.selection()$HIGHDEG_1), values = school.selection()$HIGHDEG_1,opacity = 1)%>%addSimpleGraticule()
-  #})
+  #Classification map definition
   output$myMap_1 = renderLeaflet({
   
     leaflet()%>% addTiles()%>%addProviderTiles("OpenStreetMap.BlackAndWhite")%>%
@@ -306,6 +293,7 @@ shinyServer(function(input, output,session) {
       
    })
   
+  #Sync the movement of the main map to the second map
   observe({
     b <- input$myMap_bounds
     leafletProxy("myMap_1") %>% setView(mean(c(b$west, b$east)), mean(c(b$north, b$south)), input$myMap_zoom)
@@ -314,7 +302,7 @@ shinyServer(function(input, output,session) {
   ###########################################TEAM 2 IMPLEMENTATION STARTS#################################################################################
   
   
-  #
+  
   output$ui.1 = renderUI({
     selectInput("input1",label="Select a School",choices=school.selection()$INSTNM,size=10,selectize=F,width="90%")
   })
