@@ -3,7 +3,7 @@
 
 The App directory contains the app files for the Shiny App (i.e., ui.r and server.r).
 
-In addition, you can also find our css script file named "style.css" inside folder "www"
+In addition, you can also find our css script file named "style.css" as well as other support pictures or files inside folder "www"
 
 Notes about how to use the app:
 
