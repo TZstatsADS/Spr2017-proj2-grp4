@@ -258,7 +258,7 @@ shinyServer(function(input, output,session) {
       addLayersControl(
         baseGroups = c("Esri.WorldStreetMap","Esri.WorldImagery","Toner by Stamen","OpenStreetMap","Thunderforest.SpinalMap","Thunderforest.TransportDark")
       )%>%addMeasure(
-        position = "bottomleft"
+        position = "topright"
       )%>%addMiniMap()
     #"<br><strong>Average Score of SAT Reading: </strong>","<mark>",school.selection()$SATVRMID
     #"</mark>","<br><strong>Average Score of SAT Math: </strong>",school.selection()$SATMTMID
