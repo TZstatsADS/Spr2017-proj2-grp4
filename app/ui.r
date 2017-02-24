@@ -101,7 +101,7 @@ shinyUI(fluidPage(
                               # output panel
 
                               absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
-                                            draggable = TRUE, top = 60, right = -30, bottom = "auto",
+                                            draggable = TRUE, top = 60, right = -90, bottom = "auto",
                                             width = 470, height = 400, cursor = "move",
 
                                             leafletOutput('myMap_1', width = "80%", height = 450)   
