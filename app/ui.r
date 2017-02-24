@@ -53,7 +53,7 @@ shinyUI(fluidPage(
                                           bsCollapse(id="collapse.filter",open="Filter", 
                                           
                                                      bsCollapsePanel(tags$strong("Filter"),style="primary",
-                                                            fluidRow(column(12,checkboxGroupInput("filter","Filtered By...",choices=list("Scores","Major","Tuition"),inline = TRUE))),
+                                                            fluidRow(column(12,checkboxGroupInput("filter","Filtered By...",choices=list("Scores","Major","Tuition","None"),selected="None",inline = TRUE))),
                                                             fluidRow(column(10,uiOutput("ui.filter")))),
                                                             
                                                           

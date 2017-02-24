@@ -113,7 +113,11 @@ shinyServer(function(input, output,session) {
   school.selection = eventReactive(input$search,{
     
     
-    if(c("Scores") %in% input$filter && c("Tuition") %in% input$filter)
+    if(c("None") %in% input$filter)
+    {
+      college.filtered
+    }
+    else if(c("Scores") %in% input$filter && c("Tuition") %in% input$filter)
     {
       if(input$sat.act=="SAT")
       {
