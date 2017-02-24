@@ -102,8 +102,8 @@ shinyUI(fluidPage(
                               # output panel
 
                               absolutePanel(class = "panel panel-default", fixed = TRUE,
-                                            draggable = TRUE, top = 60, right = 0, bottom = "auto",
-                                            width = 450, height = 40, cursor = "move",
+                                            draggable = TRUE, top = 50, right = 0, bottom = "auto",
+                                            width = 450, height = 30, cursor = "move",
                                             
                               bsCollapsePanel(tags$strong("Classification Map"),style = "primary",    
                                   leafletOutput('myMap_1', width = "102%", height = 450)
