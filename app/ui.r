@@ -54,9 +54,9 @@ shinyUI(fluidPage(
                                                             )
                                             ),
                                             bsCollapsePanel(tags$strong("SAT"),style="info",
-                                                            fluidRow(column(3,numericInput("sat.reading",tags$strong("Read"),value=800,min=0,max=800,step=10)),
-                                                                     column(3,numericInput("sat.math",tags$strong("Math"),value=800,min=0,max=800,step=10),offset = 0),
-                                                                     column(3,numericInput("sat.writing",tags$strong("Write"),value=800,min=20,max=800,step=10),offset = 0)
+                                                            fluidRow(column(4,numericInput("sat.reading",tags$strong("Read"),value=800,min=0,max=800,step=10)),
+                                                                     column(4,numericInput("sat.math",tags$strong("Math"),value=800,min=0,max=800,step=10),offset = 0),
+                                                                     column(4,numericInput("sat.writing",tags$strong("Write"),value=800,min=20,max=800,step=10),offset = 0)
                                                             )
                                             ),
                                             
