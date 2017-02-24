@@ -343,7 +343,7 @@ shinyUI(fluidPage(
                  #Introduction
                  tabPanel(strong(tags$i("About us")),
                           mainPanel(width=12,
-                                    h1("Project: A Shiny App Development"),
+                                    h1("Project: NY School Hunter - A Shiny App Development"),
                                     h3("Background"),
                                     p("Our project takes all available data on colleges and universities in New York State and creates a useful shiny app that allows users to explore and compare schools based on user-specific filtering criteria. The purpose of our design is to provide users with a bird's eye view of New York colleges and universities; allow them to filter, search, and group schools by their preferred criteria; and further compare two schools on a more micro level."),#Our motivation
                                     h3("Project summary"),
@@ -351,7 +351,7 @@ shinyUI(fluidPage(
                                       The side-by-side school comparison feature allows users to see a detailed breakdown of meaningful data and statistics from our available data on each school."),#What did we do
                                    
                                     h3("Team Members"),
-                                    p("   - ",strong("Ka Heng (Helen) Lo")),
+                                    p("   - ",strong("Ka Heng (Helen) Lo - Presenter")),
                                       p("   - ",strong("Boxuan Zhao")),
                                         p("   - ",strong("Song Wang")),
                                           p("   - ",strong("Senyao Han")),
