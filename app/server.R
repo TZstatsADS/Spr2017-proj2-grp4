@@ -315,7 +315,7 @@ shinyServer(function(input, output,session) {
     my_schools_file <- input$input1
     regex_image <- ".png"
     filename <- normalizePath(file.path(
-                                        paste(my_schools_file, regex_image, sep = "")))
+                                        paste("../output/www/",my_schools_file, regex_image, sep = "")))
     
     list(src=filename)
   },deleteFile = FALSE)
@@ -324,7 +324,7 @@ shinyServer(function(input, output,session) {
     my_schools_file <- input$input2
     regex_image <- ".png"
     filename <- normalizePath(file.path(
-                                        paste(my_schools_file, regex_image, sep = "")))
+                                        paste("../output/www/",my_schools_file, regex_image, sep = "")))
     
     list(src=filename)
   },deleteFile = FALSE)
